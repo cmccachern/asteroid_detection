@@ -1,0 +1,72 @@
+version: 2
+jobs:
+  pylint:
+    docker:
+      - image: circleci/python:3.7.3
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: sudo pip install -r requirements.txt
+      - run: pylint skeleton
+      - run: pylint test
+  test:
+    docker:
+      - image: circleci/python:3.7.3
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: sudo pip install -r requirements.txt
+      - run: python -m unittest discover
+  docs_build:
+    docker:
+      - image: circleci/python:3.7.3
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: sudo pip install -r requirements.txt
+      - run: make -C docs html
+      - persist_to_workspace:
+          root: docs/build
+          paths: html
+  docs_deploy:
+    docker:
+      - image: node:8.10.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: docs/build
+      - run:
+          name: Disable jekyll builds
+          command: touch docs/build/html/.nojekyll
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install -g --silent gh-pages@2.0.1
+            git config user.email "ci-build@example.com"
+            git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints:
+            - "fe:b9:6a:5e:f7:ab:0c:5f:b1:90:27:61:1a:15:b7:eb"
+      - run:
+          name: Deploy docs to gh-pages branch
+          command: gh-pages --dotfiles --message "[skip ci] Updates" --dist docs/build/html
+
+workflows:
+  version: 2
+  pylint_test_deploy:
+    jobs:
+      - pylint
+      - test
+      - docs_build:
+          requires:
+            - pylint
+            - test
+      - docs_deploy:
+          requires:
+            - docs_build
+          filters:
+            branches:
+              only: master 
