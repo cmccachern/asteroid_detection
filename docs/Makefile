@@ -18,5 +18,5 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@rm source/reference/*.rst || echo "Reference directory already clear"
-	@sphinx-apidoc -o source/reference/ ../skeleton 
+	@sphinx-apidoc -o source/reference/ ../asteroid_detection
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

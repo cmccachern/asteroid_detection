@@ -1,4 +1,4 @@
-Welcome to skeleton's documentation!
+Welcome to Asteroid Detection's documentation!
 ====================================
 
 .. toctree::

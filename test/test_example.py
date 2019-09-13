@@ -7,7 +7,7 @@ unitests directly from PyCharm.
 
 import unittest
 
-from skeleton import example
+from asteroid_detection import example
 
 class TestExample(unittest.TestCase):
     """
