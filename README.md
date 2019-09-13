@@ -1,6 +1,6 @@
-# Project Title
+# Asteroid Detection 
 
-One paragraph project description
+Use image processing to detect asteroids.
 
 ## Getting Started
 
