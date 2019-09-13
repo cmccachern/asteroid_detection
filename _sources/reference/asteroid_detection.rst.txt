@@ -1,0 +1,22 @@
+asteroid\_detection package
+===========================
+
+Submodules
+----------
+
+asteroid\_detection.example module
+----------------------------------
+
+.. automodule:: asteroid_detection.example
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: asteroid_detection
+   :members:
+   :undoc-members:
+   :show-inheritance:

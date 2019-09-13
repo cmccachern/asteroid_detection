@@ -1,0 +1,7 @@
+asteroid_detection
+==================
+
+.. toctree::
+   :maxdepth: 4
+
+   asteroid_detection
