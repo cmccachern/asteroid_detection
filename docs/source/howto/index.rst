@@ -7,3 +7,5 @@ To unterstand the basics, visit :doc:`../tutorials/index`.
 .. toctree::
    :maxdepth: 2
 
+   sdss_data
+   fits_files
