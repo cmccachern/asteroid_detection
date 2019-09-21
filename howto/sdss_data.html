@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Get Data From SDSS &#8212; Asteroid Detection  documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Read FITS files in Python" href="fits_files.html" />
+    <link rel="prev" title="How To" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fits_files.html" title="Read FITS files in Python"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="How To"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">How To</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="get-data-from-sdss">
+<h1>Get Data From SDSS<a class="headerlink" href="#get-data-from-sdss" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="https://www.sdss.org">Sloan Digital Sky Survey</a> has imaged one third of the sky, and its imagery is available for access through
+it’s Data Release, now currently on DR15.  There are many ways to view data drom SDSS.  Tools for accessing their
+data are listed in the <a class="reference external" href="https://www.sdss.org/dr15/data_access/">data access page</a>.  Data can be queried through SQL.
+“Cooking with Sloan” has a <a class="reference external" href="http://www.skyserver.sdss.org/dr14/en/help/cooking/solarsystem/moving.aspx">tutorial</a>
+which gives an example SQL query to find moving objects, such as asteroids. See the
+<a class="reference external" href="http://skyserver.sdss.org/dr15/en/help/browser/browser.aspx#&amp;&amp;history=description+PhotoObj+V">schema browser</a> for info on
+all available data fields. SQL queries for DR15 can be submitted from their
+<a class="reference external" href="http://skyserver.sdss.org/dr15/en/tools/search/sql.aspx">SQL search form</a>.  There is also a
+<a class="reference external" href="http://skyserver.sdss.org/dr1/en/proj/basic/asteroids/findingasteroids2.asp">how to find asteroids tutorial</a> that
+has a link to the Get Fields tool and several example run, camcol, and field numbers which contain ateroids.
+Once you know the run, camcol, and field, you can get data from a single field search.  Take a look at
+the search for <a class="reference external" href="https://dr12.sdss.org/fields/runCamcolField?run=752&amp;camcol=1&amp;field=373">Run 752, Camcol 1, Field 373</a>.
+In the bottom left corner, you can see an asteroid in the image.  You can also download the jpg or fits files.</p>
+<p>To access data programmatically, there is a python program called <a class="reference external" href="https://github.com/sciserver/SciScript-Python">Sciscript-Python</a>
+which can be used for insterfacing with CasJobs, a service that allows you to search for imagery from SDSS.</p>
+<p>Another potentially useful resource will be the <a class="reference external" href="https://sbn.psi.edu/pds/resource/sdssmoc.html">SDSS moving object catalog</a>,
+which lists moving objects in the data from DR4.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">How To</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="fits_files.html"
+                        title="next chapter">Read FITS files in Python</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/howto/sdss_data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fits_files.html" title="Read FITS files in Python"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="How To"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >How To</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, cmccachern.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>
