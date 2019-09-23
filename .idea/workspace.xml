@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e2713c0-27e0-41ab-a0e4-cdf6bfe33316" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/asteroid_detection/images/0293p696_ac51-w1-int-3.fits" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asteroid_detection/images/test.fits" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/asteroid_detection/queryWISE.py" beforeDir="false" afterPath="$PROJECT_DIR$/asteroid_detection/queryWISE.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/howto/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/howto/index.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/howto/wise_data.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/howto/wise_data.rst" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
