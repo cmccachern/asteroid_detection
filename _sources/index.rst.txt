@@ -1,5 +1,5 @@
 Welcome to Asteroid Detection's documentation!
-====================================
+==============================================
 
 .. toctree::
     :maxdepth: 2

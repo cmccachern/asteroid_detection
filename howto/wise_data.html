@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Read FITS files in Python &#8212; Asteroid Detection  documentation</title>
+    <title>Get Data From WISE &#8212; Asteroid Detection  documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -16,8 +16,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Get Data From WISE" href="wise_data.html" />
-    <link rel="prev" title="Get Data From SDSS" href="sdss_data.html" /> 
+    <link rel="next" title="Resources" href="../resources/index.html" />
+    <link rel="prev" title="Read FITS files in Python" href="fits_files.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,10 +29,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="wise_data.html" title="Get Data From WISE"
+          <a href="../resources/index.html" title="Resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="sdss_data.html" title="Get Data From SDSS"
+          <a href="fits_files.html" title="Read FITS files in Python"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">How To</a> &#187;</li> 
@@ -44,27 +44,22 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="read-fits-files-in-python">
-<h1>Read FITS files in Python<a class="headerlink" href="#read-fits-files-in-python" title="Permalink to this headline">¶</a></h1>
-<p>The FITS file is a storage file format for astronomical imaging data. To read a FITS file from python,
-see <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/">astropy</a>.  Conveniently, astropy is installed with
-the <a class="reference external" href="https://www.anaconda.com/distribution/">anaconda</a> distribution of python 3.  Install astropy if you
-do not have it already.</p>
-<p>Start by downloading a FITS file that we can work with.  In this example, we will use the green channel
-of <a class="reference external" href="https://dr12.sdss.org/fields/runCamcolField?run=752&amp;camcol=1&amp;field=373">this image</a> that contains an asteroid.
-Now, we can open and display the image</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fits_file</span> <span class="o">=</span> <span class="s2">&quot;frame-g-000752-1-0373.fits&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_file</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <div class="section" id="get-data-from-wise">
+<h1>Get Data From WISE<a class="headerlink" href="#get-data-from-wise" title="Permalink to this headline">¶</a></h1>
+<p>WISE images and associated datasets are available online through the Infrared Science Archive (IRSA). A description of their API’s and how to use them can be found <a class="reference external" href="https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html">HERE</a>.</p>
+<p>Datasets are also available through a URL. The way to access images this way is described in detail on the <a class="reference external" href="https://irsa.ipac.caltech.edu/ibe/docs/wise/neowiser_yr6/yr6_i1bm_frm/">IRSA website</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;scan_id&#39;</span><span class="p">:</span> <span class="s1">&#39;01111r&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;frame_num&#39;</span><span class="p">:</span> <span class="mi">37</span><span class="p">,</span>
+           <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="p">}</span>
+<span class="n">params</span><span class="p">[</span><span class="s1">&#39;scangrp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;scan_id&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="s1">&#39;{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}-int-1b.fits&#39;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser_yr6/yr6_i1bm_frm/&#39;</span> <span class="o">+</span> <span class="n">path</span>
 </pre></div>
 </div>
-<p>To see how SDSS converts their FITS files into jpg images, look
-<a class="reference external" href="https://www.sdss.org/dr14/imaging/jpg-images-on-skyserver/">here</a>.</p>
+<p>For information on the Wise Survey, and what it is, IRSA briefly describes this in a <a class="reference external" href="https://www.youtube.com/watch?v=dmnIoIpN7I0&amp;list=PL3UuvF_s8KWIZEwwFemmm7PeCDQFL5shU&amp;index=14">youtube video</a>.</p>
 </div>
 
 
@@ -74,15 +69,15 @@ Now, we can open and display the image</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="sdss_data.html"
-                        title="previous chapter">Get Data From SDSS</a></p>
+  <p class="topless"><a href="fits_files.html"
+                        title="previous chapter">Read FITS files in Python</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="wise_data.html"
-                        title="next chapter">Get Data From WISE</a></p>
+  <p class="topless"><a href="../resources/index.html"
+                        title="next chapter">Resources</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/howto/fits_files.rst.txt"
+      <li><a href="../_sources/howto/wise_data.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -110,10 +105,10 @@ Now, we can open and display the image</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="wise_data.html" title="Get Data From WISE"
+          <a href="../resources/index.html" title="Resources"
              >next</a> |</li>
         <li class="right" >
-          <a href="sdss_data.html" title="Get Data From SDSS"
+          <a href="fits_files.html" title="Read FITS files in Python"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >How To</a> &#187;</li> 
