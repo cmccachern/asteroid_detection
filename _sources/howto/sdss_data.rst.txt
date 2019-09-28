@@ -22,3 +22,37 @@ which can be used for insterfacing with CasJobs, a service that allows you to se
 Another potentially useful resource will be the `SDSS moving object catalog <https://sbn.psi.edu/pds/resource/sdssmoc.html>`_,
 which lists moving objects in the data from DR4.
 
+Python API
+==========
+
+.. warning::
+    The call to sdss.jpg_from_rcf() or sdss.fits_from_rcf() makes a GET request to the sdss servers.
+    These functions should not be called frequently to avoid hitting the server with unnecessary requests.
+    If you need to use the same data multiple times for testing, make sure to first save the images to
+    disk and use the local imagery.  This will speed up run time and reduce unecessary traffic for the sdss servers.
+
+Get JPG Images
+--------------
+
+>>> from asteroid_detection import sdss
+>>> import matplotlib.pyplot as plt
+>>> img = sdss.jpg_from_rcf(752, 1, 373)
+>>> plt.imshow(img)
+>>> plt.show()
+
+.. image:: /_static/sdss_jpg.png
+
+
+Get FITS Files
+--------------
+
+>>> from asteroid_detection import sdss
+>>> import matplotlib.pyplot as plt
+>>> import numpy as np
+>>> fits_data = sdss.fits_from_rcf(752, 1, 373)
+>>> hdul_red = fits_data["r"]
+>>> img = hdul_red[0].data
+>>> plt.imshow(np.log10(img))
+>>> plt.show()
+
+.. image:: /_static/fits_red.png

@@ -70,6 +70,58 @@ information, see the numpy docstring guide at
 </dd></dl>
 
 </div>
+<div class="section" id="module-asteroid_detection.sdss">
+<span id="asteroid-detection-sdss-module"></span><h2>asteroid_detection.sdss module<a class="headerlink" href="#module-asteroid_detection.sdss" title="Permalink to this headline">¶</a></h2>
+<p>Get data from the Sloan Digital Sky Survey (SDSS).</p>
+<dl class="function">
+<dt id="asteroid_detection.sdss.fits_from_rcf">
+<code class="sig-prename descclassname">asteroid_detection.sdss.</code><code class="sig-name descname">fits_from_rcf</code><span class="sig-paren">(</span><em class="sig-param">run, camcol, field, rerun=301, bands=['g', 'r', 'u', 'i', 'z']</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.sdss.fits_from_rcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get fits image from sdss given run, camcol, and field.</p>
+<p>For more infomation on bulk data searches, see:
+<a class="reference external" href="https://www.sdss.org/dr15/data_access/bulk/#ImagingData">https://www.sdss.org/dr15/data_access/bulk/#ImagingData</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run</strong> (<em>int</em>) – </p></li>
+<li><p><strong>camcol</strong> (<em>int</em>) – Camera column</p></li>
+<li><p><strong>field</strong> (<em>int</em>) – </p></li>
+<li><p><strong>rerun</strong> (<em>int</em>) – Rerun specifies a particular processing pipeline that the original data
+has been sent through.</p></li>
+<li><p><strong>bands</strong> (<em>list</em>) – Specify which bands of imagery to get.  To get only the green channel,
+this value should be [“g”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fits_files</strong> – Dictionary containing the astropy fits files for every band.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="asteroid_detection.sdss.jpg_from_rcf">
+<code class="sig-prename descclassname">asteroid_detection.sdss.</code><code class="sig-name descname">jpg_from_rcf</code><span class="sig-paren">(</span><em class="sig-param">run</em>, <em class="sig-param">camcol</em>, <em class="sig-param">field</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.sdss.jpg_from_rcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a jpg image from sdss given run, camcol, and field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run</strong> (<em>int</em>) – </p></li>
+<li><p><strong>camcol</strong> (<em>int</em>) – </p></li>
+<li><p><strong>field</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>img</strong> – This image can be plotted with matplotlib or converted to numpy array with np.array(img).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>PIL.JpegImagePlugin.JpegImageFile</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-asteroid_detection">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-asteroid_detection" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -86,6 +138,7 @@ information, see the numpy docstring guide at
 <li><a class="reference internal" href="#">asteroid_detection package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-asteroid_detection.example">asteroid_detection.example module</a></li>
+<li><a class="reference internal" href="#module-asteroid_detection.sdss">asteroid_detection.sdss module</a></li>
 <li><a class="reference internal" href="#module-asteroid_detection">Module contents</a></li>
 </ul>
 </li>

@@ -12,6 +12,14 @@ asteroid\_detection.example module
    :undoc-members:
    :show-inheritance:
 
+asteroid\_detection.sdss module
+-------------------------------
+
+.. automodule:: asteroid_detection.sdss
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------
