@@ -154,7 +154,8 @@ def find_params():
     with open('asteroid_catalog.json', 'r') as file:
         catalog = json.load(file)
     catalog = list(catalog.items())
-    item = catalog[np.random.randint(len(catalog))]
+    rand = np.random.randint(len(catalog))
+    item = catalog[rand]
     return item
 
 
@@ -182,7 +183,7 @@ def download_fits(fits_name):
             raise SyntaxError('parameter name does not match standard, cannot find an image')
 
         params = {'scan_id': str(fits_name[:scan_index]),
-                  'frame_num': int(fits_name[index:-1]),
+                  'frame_num': int(fits_name[scan_index:-1]),
                   'band': int(fits_name[-1])
                   }
     else:
@@ -202,6 +203,20 @@ def download_fits(fits_name):
     return fits_file[0]
 
 
+def avg(data, row, col):
+    total = 0
+    count = 0
+    for x_index in range(-1, 1):
+        for y_index in range(-1, 1):
+            if not np.isnan(data[row + x_index, col + y_index]):
+                total = total + data[row + x_index, col + y_index]
+                count = count + 1
+    if count and not np.isnan(total):
+        return total / count
+    else:
+        done = False
+
+
 def filter_image(data):
     """
     average NaN pixels to reduce noise,
@@ -219,20 +234,14 @@ def filter_image(data):
     done = False
     while not done:
         done = True
-        for row in range(len(data)):
-            for col in range(len(data[row])):
-                total = 0
-                count = 0
+        for row, row_value in enumerate(data):
+            for col, col_value in enumerate(data[row]):
                 if np.isnan(data[row, col]):
-                    for x_index in range(-1, 1):
-                        for y_index in range(-1, 1):
-                            if not np.isnan(data[row + x_index, col + y_index]):
-                                total = total + data[row + x_index, col + y_index]
-                                count = count + 1
-                    if count and not np.isnan(total):
-                        data[row, col] = total/count
-                    else:
+                    new_pixel = avg(data,row,col)
+                    if np.isnan(new_pixel):
                         done = False
+                    else:
+                        data[row, col] = new_pixel
     return data
 
 # fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/

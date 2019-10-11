@@ -4,6 +4,7 @@ This is an example module.  Every module should have a descriptive docsting.
 
 import numpy as np
 
+
 def sum_list(data):
     """
     Sum a list of numbers.
