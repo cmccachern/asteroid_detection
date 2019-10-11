@@ -1,13 +1,13 @@
 """
 Get data from the Neowise survey.
 """
-
+import json
+import tempfile
 import numpy as np
 import requests
-import tempfile
 from astropy.io import fits
 import atpy
-import json
+
 
 
 def search_points(**kwargs):
@@ -172,9 +172,9 @@ def download_fits(fits_name):
         A neowise fits image with header
     """
     if type(fits_name) == str:
-        for i, c in enumerate(fits_name):
-            if c.isalpha():
-                index = i+1
+        for index, char in enumerate(fits_name):
+            if char.isalpha():
+                index = index+1
         params = {'scan_id': str(fits_name[:index]),
                   'frame_num': int(fits_name[index:-1]),
                   'band': int(fits_name[-1])
@@ -212,18 +212,18 @@ def filter_image(data):
     done = False
     while not done:
         done = True
-        for a in range(len(data)):
-            for b in range(len(data[a])):
+        for row in range(len(data)):
+            for col in range(len(data[row])):
                 total = 0
                 count = 0
-                if np.isnan(data[a, b]):
-                    for c in range(-1, 1):
-                        for d in range(-1, 1):
-                            if not np.isnan(data[a + c, b + c]):
-                                total = total + data[a + c, b + c]
+                if np.isnan(data[row, col]):
+                    for x_index in range(-1, 1):
+                        for y_index in range(-1, 1):
+                            if not np.isnan(data[row + x_index, col + y_index]):
+                                total = total + data[row + x_index, col + y_index]
                                 count = count + 1
                     if count and not np.isnan(total):
-                        data[a, b] = total/count
+                        data[row, col] = total/count
                     else:
                         done = False
     return data
