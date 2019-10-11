@@ -26,7 +26,8 @@ def search_points(**kwargs):
     spatial : string
         kwarg for search area(default is cone), options: box, polygon, upload, none
     format : int
-        kwarg for output format. optional, default = 1. 0:HTML, 1: ASCII, 2: SVC, 3: VO Table, 6: XML
+        kwarg for output format. optional,
+        default = 1. 0:HTML, 1: ASCII, 2: SVC, 3: VO Table, 6: XML
     radius : int
         kwarg for cone radius. optional, default value is 10 arcseconds
     size : int
@@ -55,9 +56,10 @@ def search_points(**kwargs):
     if not kwargs['spatial']:
         query = query + '&spatial=cone'
     if not kwargs['pos']:
-        query = query + '&objstr=' + str(np.random.randint(61)) + 'h+' + str(np.random.randint(61)) +\
-            'm+' + str(np.random.randint(61)) + 's+' + str(np.random.randint(361)) + 'd+' + \
-            str(np.random.randint(61)) + 'm+' + str(np.random.randint(6001)/100) + 's'
+        query = query + '&objstr=' + str(np.random.randint(61)) + 'h+' + \
+                str(np.random.randint(61)) + 'm+' + str(np.random.randint(61)) + \
+                's+' + str(np.random.randint(361)) + 'd+' + str(np.random.randint(61)) +\
+                'm+' + str(np.random.randint(6001)/100) + 's'
     if not kwargs['format']:
         query = query + '&outfmt=1'
 
@@ -131,7 +133,8 @@ def search_for_fits(ra, dec):
     image_metadata : table
         Dictionary containing the astropy fits files for every band.
     """
-    search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(ra) + ',' + str(dec)
+    search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' \
+             + str(ra) + ',' + str(dec)
     html = requests.get(search)
     html.raise_for_status()
     with tempfile.NamedTemporaryFile(suffix='.tbl') as tbl:
@@ -183,7 +186,8 @@ def download_fits(fits_name):
         params = fits_name
     params['scangrp'] = params['scan_id'][-2:]
     path = str.format(
-        '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}-int-1b.fits', **params)
+        '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}' +
+        '-int-1b.fits', **params)
     url = 'https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/' + path
     response = requests.get(url)
     response.raise_for_status()
