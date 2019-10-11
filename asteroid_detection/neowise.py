@@ -9,7 +9,6 @@ from astropy.io import fits
 import atpy
 
 
-
 def search_points(**kwargs):
     """
     Get Metadata for an asteroid given asteroid name or number,
@@ -22,7 +21,7 @@ def search_points(**kwargs):
     pos : string
         kwarg for coordinates, required when spatial = cone or box
         format: ##h+##m+##.##s+##d+##m+##.##s (hour-arcminute-arcsecond, degree-minute-second)
-        (RA, DEC)
+        (rad, dec)
     spatial : string
         kwarg for search area(default is cone), options: box, polygon, upload, none
     format : int
@@ -114,7 +113,7 @@ def search_asteroid(asteroid, **kwargs):
     return asteroid_sightings
 
 
-def search_for_fits(ra, dec):
+def search_for_fits(rad, dec):
     """
     Get Metadata for images at a specific coordinate,
 
@@ -123,7 +122,7 @@ def search_for_fits(ra, dec):
 
     Parameters
     ----------
-    ra : float
+    rad : float
         Right ascension (0 - 360)
     dec : float
         Declination (0 - 360)
@@ -134,7 +133,7 @@ def search_for_fits(ra, dec):
         Dictionary containing the astropy fits files for every band.
     """
     search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' \
-             + str(ra) + ',' + str(dec)
+             + str(rad) + ',' + str(dec)
     html = requests.get(search)
     html.raise_for_status()
     with tempfile.NamedTemporaryFile(suffix='.tbl') as tbl:
@@ -149,14 +148,14 @@ def find_params():
 
     Returns
     -------
-    catalog : list
+    item : list
         object with image parameters and known asteroid coordinates in image
     """
-    with open('asteroid_catalog.json', 'r') as f:
-        catalog = json.load(f)
+    with open('asteroid_catalog.json', 'r') as file:
+        catalog = json.load(file)
     catalog = list(catalog.items())
-    r = np.random.randint(len(catalog))
-    return catalog[r]
+    item = catalog[np.random.randint(len(catalog))]
+    return item
 
 
 def download_fits(fits_name):
@@ -174,11 +173,15 @@ def download_fits(fits_name):
     fits_file : fits
         A neowise fits image with header
     """
-    if type(fits_name) == str:
+    if isinstance(fits_name) == str:
+        scan_index = 0
         for index, char in enumerate(fits_name):
             if char.isalpha():
-                index = index+1
-        params = {'scan_id': str(fits_name[:index]),
+                scan_index = index+1
+        if scan_index == 0:
+            raise SyntaxError('parameter name does not match standard, cannot find an image')
+
+        params = {'scan_id': str(fits_name[:scan_index]),
                   'frame_num': int(fits_name[index:-1]),
                   'band': int(fits_name[-1])
                   }
@@ -232,8 +235,9 @@ def filter_image(data):
                         done = False
     return data
 
-# fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/       params
+# fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/
 # Metadata table = https://irsa.ipac.caltech.edu/ibe/docs/wise/neowiser/p1bm_frm/
-# neowise search = https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?     POS=
+# neowise search = https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?
 # Gator search = https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?
-# catalog names = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
+# catalog names =
+# ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
