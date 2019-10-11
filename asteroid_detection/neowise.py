@@ -64,7 +64,6 @@ def search_points(**kwargs):
 
     html = requests.get(url + query)
     html.raise_for_status()
-    print('after request:', kwargs['pos'])
     with tempfile.NamedTemporaryFile(suffix='.tbl') as tbl:
         tbl.write(html.content)
         source_points = atpy.Table(tbl.name)
@@ -155,7 +154,7 @@ def find_params():
         catalog = json.load(file)
     catalog = list(catalog.items())
     rand = np.random.randint(len(catalog))
-    item = catalog[rand]
+    item = catalog[int(rand)]
     return item
 
 
@@ -174,7 +173,7 @@ def download_fits(fits_name):
     fits_file : fits
         A neowise fits image with header
     """
-    if isinstance(fits_name) == str:
+    if isinstance(fits_name, str):
         scan_index = 0
         for index, char in enumerate(fits_name):
             if char.isalpha():
@@ -229,9 +228,10 @@ def avg(data, row, col):
                 total = total + data[row + x_index, col + y_index]
                 count = count + 1
     if count and not np.isnan(total):
-        return total / count
+        average = total / count
     else:
-        return total
+        average = total
+    return average
 
 
 def filter_image(data):
@@ -251,14 +251,14 @@ def filter_image(data):
     done = False
     while not done:
         done = True
-        for row in enumerate(data):
-            for col in enumerate(data[row]):
-                if np.isnan(data[row, col]):
-                    new_pixel = avg(data,row,col)
+        for x_index, row in enumerate(data):
+            for y_index, col in enumerate(data[x_index]):
+                if np.isnan(data[x_index, y_index]):
+                    new_pixel = avg(data, x_index, y_index)
                     if np.isnan(new_pixel):
                         done = False
                     else:
-                        data[row, col] = new_pixel
+                        data[x_index, y_index] = new_pixel
     return data
 
 # fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/
