@@ -3,13 +3,11 @@ Get data from the Neowise survey.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import io
 import requests
 import tempfile
 from astropy.io import fits
 import atpy
-from PIL import Image
+import json
 
 
 def search_points(**kwargs):
@@ -33,8 +31,10 @@ def search_points(**kwargs):
         kwarg for cone radius. optional, default value is 10 arcseconds
     size : int
         kwarg for box size. only required if spatial = box
-    mobj : string. smo = by name or number, mpc = MPC format, obt = orbital elements
-        required for finding an asteroid
+    btime : string
+        kwarg for beginning time. format: btime=2018+01+01+01:01:01
+    etime : string
+        kwarg for ending time. format: etime=2018+01+01+01:01:01
 
     Returns
     -------
@@ -42,7 +42,8 @@ def search_points(**kwargs):
         Dictionary containing the astropy fits files for every band.
     """
     constraints = {'pos': '&objstr=', 'size': '&size=', 'format': '&outfmt=',
-                   'spatial': '&spatial=', 'radius': '&radius='}
+                   'spatial': '&spatial=', 'radius': '&radius=', 'btime': '&btime=',
+                   'etime': '&etime='}
     query = ''
     url = "https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?" \
           "outfmt=1&searchForm=MO&catalog=neowiser_p1bs_psd"
@@ -83,27 +84,27 @@ def search_asteroid(asteroid, **kwargs):
 
     Other Parameters
     ------
-    mobj : string. smo = by name or number, mpc = MPC format, obt = orbital elements
-        required for finding an asteroid
+    btime : string
+        kwarg for beginning time. format: btime=2018+01+01+01:01:01
+    etime : string
+        kwarg for ending time. format: etime=2018+01+01+01:01:01
 
     Returns
     -------
     asteroid_sightings : table
         Dictionary containing the astropy fits files for every band.
     """
-    arg = {'pos': '&objstr=', 'size': '&size=', 'format': '&outfmt=', 'spatial': '&spatial=', 'radius': '&radius='}
-    s = ''
-
+    constraints = {'btime': '&btime=', 'etime': '&etime='}
+    query = ''
     for key, value in kwargs.items():
-        if key in arg:
-            print('here!')
-            s = s + arg[key] + value
+        if key in constraints:
+            query = query + constraints[key] + value
 
     url = "https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?" \
           "outfmt=1&searchForm=MO&catalog=neowiser_p1bs_psd" \
           "&mobj=smo&mobjstr="
 
-    html = requests.get(url + asteroid)
+    html = requests.get(url + asteroid + query)
     html.raise_for_status()
     with tempfile.NamedTemporaryFile(suffix='.tbl') as tbl:
         tbl.write(html.content)
@@ -130,22 +131,59 @@ def search_for_fits(ra, dec):
     image_metadata : table
         Dictionary containing the astropy fits files for every band.
     """
-    search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(ra) + str(dec)
+    search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(ra) + ',' + str(dec)
     html = requests.get(search)
+    html.raise_for_status()
     with tempfile.NamedTemporaryFile(suffix='.tbl') as tbl:
         tbl.write(html.content)
         image_metadata = atpy.Table(tbl.name)
     return image_metadata
 
 
+def find_params():
+    """
+    load asteroid_catalog.json, find a random image to download from irsa,
+
+    Returns
+    -------
+    catalog : list
+        object with image parameters and known asteroid coordinates in image
+    """
+    with open('asteroid_catalog.json', 'r') as f:
+        catalog = json.load(f)
+    catalog = list(catalog.items())
+    r = np.random.randint(len(catalog))
+    return catalog[r]
+
+
 def download_fits(fits_name):
-    params = {'scan_id': fits_name[:6],
-              'frame_num': fits_name[-4:-1],
-              'band': fits_name[-1]
-              }
+    """
+    Download FITS image from irsa website
+
+    Parameters
+    ------
+    fits_name : dictionary or string
+        the name of the fits image, so that it can be retrieved
+        from the irsa database
+
+    Returns
+    -------
+    fits_file : fits
+        A neowise fits image with header
+    """
+    if type(fits_name) == str:
+        for i, c in enumerate(fits_name):
+            if c.isalpha():
+                index = i+1
+        params = {'scan_id': str(fits_name[:index]),
+                  'frame_num': int(fits_name[index:-1]),
+                  'band': int(fits_name[-1])
+                  }
+    else:
+        params = fits_name
+    params['scangrp'] = params['scan_id'][-2:]
     path = str.format(
-        '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}-int-1b.fits',
-        **params)
+        '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}-int-1b.fits', **params)
     url = 'https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/' + path
     response = requests.get(url)
     response.raise_for_status()
@@ -154,7 +192,41 @@ def download_fits(fits_name):
     with tempfile.NamedTemporaryFile() as ff:
         ff.write(response.content)
         fits_file = fits.open(ff.name)
-    return fits_file
+    return fits_file[0]
+
+
+def filter_image(data):
+    """
+    average NaN pixels to reduce noise,
+
+    Parameters
+    ------
+    data : Numpy array
+        Image that is to be filtered
+
+    Returns
+    -------
+    data : numpy array
+        Filtered image
+    """
+    done = False
+    while not done:
+        done = True
+        for a in range(len(data)):
+            for b in range(len(data[a])):
+                total = 0
+                count = 0
+                if np.isnan(data[a, b]):
+                    for c in range(-1, 1):
+                        for d in range(-1, 1):
+                            if not np.isnan(data[a + c, b + c]):
+                                total = total + data[a + c, b + c]
+                                count = count + 1
+                    if count and not np.isnan(total):
+                        data[a, b] = total/count
+                    else:
+                        done = False
+    return data
 
 # fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/       params
 # Metadata table = https://irsa.ipac.caltech.edu/ibe/docs/wise/neowiser/p1bm_frm/
