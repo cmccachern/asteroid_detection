@@ -204,6 +204,23 @@ def download_fits(fits_name):
 
 
 def avg(data, row, col):
+    """
+    average NaN pixels to reduce noise,
+
+    Parameters
+    ------
+    data : Numpy array
+        Image that is to be filtered
+    row : int
+        x position of pixel to be filtered
+    col : int
+        y position of pixel to be filtered
+
+    Returns
+    -------
+    average : int or Nan
+        Filtered pixel
+    """
     total = 0
     count = 0
     for x_index in range(-1, 1):
@@ -214,7 +231,7 @@ def avg(data, row, col):
     if count and not np.isnan(total):
         return total / count
     else:
-        done = False
+        return total
 
 
 def filter_image(data):
@@ -234,8 +251,8 @@ def filter_image(data):
     done = False
     while not done:
         done = True
-        for row, row_value in enumerate(data):
-            for col, col_value in enumerate(data[row]):
+        for row in enumerate(data):
+            for col in enumerate(data[row]):
                 if np.isnan(data[row, col]):
                     new_pixel = avg(data,row,col)
                     if np.isnan(new_pixel):
