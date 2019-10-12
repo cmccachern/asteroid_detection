@@ -1,0 +1,38 @@
+asteroid\_detection.neowise package
+===================================
+
+Submodules
+----------
+
+asteroid\_detection.neowise.display\_image module
+-------------------------------------------------
+
+.. automodule:: asteroid_detection.neowise.display_image
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+asteroid\_detection.neowise.fits\_file module
+---------------------------------------------
+
+.. automodule:: asteroid_detection.neowise.fits_file
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+asteroid\_detection.neowise.neowise\_api module
+-----------------------------------------------
+
+.. automodule:: asteroid_detection.neowise.neowise_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: asteroid_detection.neowise
+   :members:
+   :undoc-members:
+   :show-inheritance:

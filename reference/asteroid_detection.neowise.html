@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>asteroid_detection.neowise package &#8212; Asteroid Detection  documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="asteroid_detection package" href="asteroid_detection.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="asteroid_detection.html" title="asteroid_detection package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >asteroid_detection</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="asteroid_detection.html" accesskey="U">asteroid_detection package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="asteroid-detection-neowise-package">
+<h1>asteroid_detection.neowise package<a class="headerlink" href="#asteroid-detection-neowise-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="asteroid-detection-neowise-display-image-module">
+<h2>asteroid_detection.neowise.display_image module<a class="headerlink" href="#asteroid-detection-neowise-display-image-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-asteroid_detection.neowise.fits_file">
+<span id="asteroid-detection-neowise-fits-file-module"></span><h2>asteroid_detection.neowise.fits_file module<a class="headerlink" href="#module-asteroid_detection.neowise.fits_file" title="Permalink to this headline">¶</a></h2>
+<p>class for containing fits image and properties</p>
+<dl class="class">
+<dt id="asteroid_detection.neowise.fits_file.Fits">
+<em class="property">class </em><code class="sig-prename descclassname">asteroid_detection.neowise.fits_file.</code><code class="sig-name descname">Fits</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.fits_file.Fits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fits file and associated data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>Numpy array</em>) – fits file downloaded from neowise</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – optional. data pertaining to the image including known asteroids</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="asteroid_detection.neowise.fits_file.Fits.coordinates">
+<code class="sig-name descname">coordinates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.fits_file.Fits.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>average NaN pixels to reduce noise,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>[x], [y]</strong> – (x, y) coordinates for asteroid in image</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy array of type float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="asteroid_detection.neowise.fits_file.Fits.filter_image">
+<code class="sig-name descname">filter_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.fits_file.Fits.filter_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>average NaN pixels to reduce noise,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>data</strong> – Filtered image</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-asteroid_detection.neowise.neowise_api">
+<span id="asteroid-detection-neowise-neowise-api-module"></span><h2>asteroid_detection.neowise.neowise_api module<a class="headerlink" href="#module-asteroid_detection.neowise.neowise_api" title="Permalink to this headline">¶</a></h2>
+<p>Get data from the Neowise survey.</p>
+<dl class="function">
+<dt id="asteroid_detection.neowise.neowise_api.download_fits">
+<code class="sig-prename descclassname">asteroid_detection.neowise.neowise_api.</code><code class="sig-name descname">download_fits</code><span class="sig-paren">(</span><em class="sig-param">fits_name</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.neowise_api.download_fits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download FITS image from irsa website</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fits_name</strong> (<em>dictionary</em><em> or </em><em>string</em>) – the name of the fits image, so that it can be retrieved
+from the irsa database</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fits_file</strong> – A neowise fits image with header</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fits</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="asteroid_detection.neowise.neowise_api.find_params">
+<code class="sig-prename descclassname">asteroid_detection.neowise.neowise_api.</code><code class="sig-name descname">find_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.neowise_api.find_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>load asteroid_catalog.json, find a random image to download from irsa,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>item</strong> – object with image parameters and known asteroid coordinates in image</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="asteroid_detection.neowise.neowise_api.search_asteroid">
+<code class="sig-prename descclassname">asteroid_detection.neowise.neowise_api.</code><code class="sig-name descname">search_asteroid</code><span class="sig-paren">(</span><em class="sig-param">asteroid</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.neowise_api.search_asteroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Metadata for an asteroid given asteroid name or number,</p>
+<p>For more infomation on bulk data searches, see:
+<a class="reference external" href="https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html">https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>asteroid</strong> (<em>string</em>) – search for all known sightings of a specific asteroid</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>btime</strong> (<em>string</em>) – kwarg for beginning time. format: btime=2018+01+01+01:01:01</p></li>
+<li><p><strong>etime</strong> (<em>string</em>) – kwarg for ending time. format: etime=2018+01+01+01:01:01</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>asteroid_sightings</strong> – Dictionary containing the astropy fits files for every band.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="asteroid_detection.neowise.neowise_api.search_for_fits">
+<code class="sig-prename descclassname">asteroid_detection.neowise.neowise_api.</code><code class="sig-name descname">search_for_fits</code><span class="sig-paren">(</span><em class="sig-param">rad</em>, <em class="sig-param">dec</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.neowise_api.search_for_fits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Metadata for images at a specific coordinate,</p>
+<p>For more infomation on bulk data searches, see:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rad</strong> (<em>float</em>) – Right ascension (0 - 360)</p></li>
+<li><p><strong>dec</strong> (<em>float</em>) – Declination (0 - 360)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>image_metadata</strong> – Dictionary containing the astropy fits files for every band.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="asteroid_detection.neowise.neowise_api.search_points">
+<code class="sig-prename descclassname">asteroid_detection.neowise.neowise_api.</code><code class="sig-name descname">search_points</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#asteroid_detection.neowise.neowise_api.search_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Metadata for an asteroid given asteroid name or number,</p>
+<p>For more infomation on bulk data searches, see:
+<a class="reference external" href="https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html">https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> (<em>string</em>) – kwarg for coordinates, required when spatial = cone or box
+format: ##h+##m+##.##s+##d+##m+##.##s (hour-arcminute-arcsecond, degree-minute-second)
+(rad, dec)</p></li>
+<li><p><strong>spatial</strong> (<em>string</em>) – kwarg for search area(default is cone), options: box, polygon, upload, none</p></li>
+<li><p><strong>format</strong> (<em>int</em>) – kwarg for output format. optional,
+default = 1. 0:HTML, 1: ASCII, 2: SVC, 3: VO Table, 6: XML</p></li>
+<li><p><strong>radius</strong> (<em>int</em>) – kwarg for cone radius. optional, default value is 10 arcseconds</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – kwarg for box size. only required if spatial = box</p></li>
+<li><p><strong>btime</strong> (<em>string</em>) – kwarg for beginning time. format: btime=2018+01+01+01:01:01</p></li>
+<li><p><strong>etime</strong> (<em>string</em>) – kwarg for ending time. format: etime=2018+01+01+01:01:01</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>source_points</strong> – Dictionary containing the astropy fits files for every band.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>table</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-asteroid_detection.neowise">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-asteroid_detection.neowise" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">asteroid_detection.neowise package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#asteroid-detection-neowise-display-image-module">asteroid_detection.neowise.display_image module</a></li>
+<li><a class="reference internal" href="#module-asteroid_detection.neowise.fits_file">asteroid_detection.neowise.fits_file module</a></li>
+<li><a class="reference internal" href="#module-asteroid_detection.neowise.neowise_api">asteroid_detection.neowise.neowise_api module</a></li>
+<li><a class="reference internal" href="#module-asteroid_detection.neowise">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="asteroid_detection.html"
+                        title="previous chapter">asteroid_detection package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reference/asteroid_detection.neowise.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="asteroid_detection.html" title="asteroid_detection package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Asteroid Detection  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >asteroid_detection</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="asteroid_detection.html" >asteroid_detection package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, cmccachern.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

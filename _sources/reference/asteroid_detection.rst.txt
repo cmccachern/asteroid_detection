@@ -1,6 +1,13 @@
 asteroid\_detection package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   asteroid_detection.neowise
+
 Submodules
 ----------
 
