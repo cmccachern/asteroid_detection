@@ -251,8 +251,8 @@ def filter_image(data):
     done = False
     while not done:
         done = True
-        for x_index, row in enumerate(data):
-            for y_index, col in enumerate(data[x_index]):
+        for y_index, row in enumerate(data):
+            for x_index in range(len(row)):
                 if np.isnan(data[x_index, y_index]):
                     new_pixel = avg(data, x_index, y_index)
                     if np.isnan(new_pixel):
