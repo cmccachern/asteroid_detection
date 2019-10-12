@@ -202,65 +202,6 @@ def download_fits(fits_name):
     return fits_file[0]
 
 
-def avg(data, row, col):
-    """
-    average NaN pixels to reduce noise,
-
-    Parameters
-    ------
-    data : Numpy array
-        Image that is to be filtered
-    row : int
-        x position of pixel to be filtered
-    col : int
-        y position of pixel to be filtered
-
-    Returns
-    -------
-    average : int or Nan
-        Filtered pixel
-    """
-    total = 0
-    count = 0
-    for x_index in range(-1, 1):
-        for y_index in range(-1, 1):
-            if not np.isnan(data[row + x_index, col + y_index]):
-                total = total + data[row + x_index, col + y_index]
-                count = count + 1
-    if count and not np.isnan(total):
-        average = total / count
-    else:
-        average = total
-    return average
-
-
-def filter_image(data):
-    """
-    average NaN pixels to reduce noise,
-
-    Parameters
-    ------
-    data : Numpy array
-        Image that is to be filtered
-
-    Returns
-    -------
-    data : numpy array
-        Filtered image
-    """
-    done = False
-    while not done:
-        done = True
-        for y_index, row in enumerate(data):
-            for x_index in range(len(row)):
-                if np.isnan(data[x_index, y_index]):
-                    new_pixel = avg(data, x_index, y_index)
-                    if np.isnan(new_pixel):
-                        done = False
-                    else:
-                        data[x_index, y_index] = new_pixel
-    return data
-
 # fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/
 # Metadata table = https://irsa.ipac.caltech.edu/ibe/docs/wise/neowiser/p1bm_frm/
 # neowise search = https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?
