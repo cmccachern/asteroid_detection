@@ -4,8 +4,8 @@ example code, will show a random FITS image
 
 import numpy as np
 import dippykit as dip
-from neowise import neowise_api as neo
-from neowise.fits_file import Fits
+import neowise_api as neo
+from fits_file import Fits
 
 
 IMAGE_DETAILS = neo.find_params()
