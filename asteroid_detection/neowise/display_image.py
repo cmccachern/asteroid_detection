@@ -14,7 +14,7 @@ catalog = list(catalog.items())
 rand = np.random.randint(len(catalog))
 item = catalog[int(rand)]
 cake = [item]
-print(item[1]['asteroids'])
+#print(item[1]['asteroids'])
 for i in catalog:
     if item[1]['asteroids'][0]['date'][:9] == i[1]['asteroids'][0]['date'][:9]:
         for ast in range(len(i[1]['asteroids'])):
@@ -32,7 +32,7 @@ if len(IMAGE_DETAILS) < 6:
     size = len(IMAGE_DETAILS) - 1
 
 for idx in range(size):
-    print(cake[idx])
+    #print(cake[idx])
     #IMAGE_DETAILS[idx] = neo.find_params()
     #IMAGE_DETAILS[idx] = cake[idx]
     NAME[idx] = IMAGE_DETAILS[idx][0]
