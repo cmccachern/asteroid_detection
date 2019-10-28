@@ -27,7 +27,7 @@ class Fits:
         self._date = params[1]['asteroids'][0]['date']
         self._asteroids = params[1]['asteroids']
 
-    def coordinates(self):
+    def coordinates(self, world=False):
         """
         average NaN pixels to reduce noise,
 
@@ -39,8 +39,12 @@ class Fits:
         x_pos, y_pos = [], []
         coord = wcs.WCS(self._file)
         for astr in self._asteroids:
-            x_temp, y_temp = coord.wcs_world2pix(float(astr['ra']),
-                                                 float(astr['dec']), 0)
+            if not world:
+                x_temp, y_temp = coord.wcs_world2pix(float(astr['ra']),
+                                                     float(astr['dec']), 0)
+            else:
+                x_temp, y_temp = float(astr['ra']), float(astr['dec'])
+
             x_pos.append(x_temp)
             y_pos.append(y_temp)
         return x_pos, y_pos
@@ -139,3 +143,12 @@ class Fits:
             for a in range(len(temp_image[i])):
                 if 20 - thickness < np.sqrt(np.square(y_pos[0]-i) + np.square(x_pos[0]-a)) < thickness + 20:
                     temp_image[i, a] = np.max(temp_image)
+
+    def scale(self, original_image=None):
+        if original_image:
+            temp_image = self._file.data
+        else:
+            temp_image = self._image
+        temp_image = temp_image - np.min(temp_image)
+        denominator = np.max(temp_image) - np.min(temp_image)
+        self._image = temp_image / denominator

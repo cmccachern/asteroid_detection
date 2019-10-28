@@ -195,30 +195,11 @@ def download_fits(fits_name):
         '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}' +
         '-int-1b.fits', **params)
     url = 'https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/' + path
-    print(url)
-    #response = requests.get(url)
+
     file = wget.download(url)
 
-    #response.raise_for_status()
-
-    test = open('/newfile.fits', 'wb')
-    # mem = io.BytesIO(response.content)
-    # mem.seek(0)
-    # #test.write(mem.read())
-    # test.write(response.content)
-
-    test.close()
-
-    hdul = fits.open(file, mode='update')
-    #print(hdul[0].data)
-    data = hdul
-
-    hdul.close()
-
-    #mem.seek(0)
     # Reading from a Bytes stream produces an error, use tempfile instead
     with fits.open(file) as ff:
-        #fits_file = ff.read()#fits.open
         data = copy.deepcopy(ff)
     return data[0]
 
