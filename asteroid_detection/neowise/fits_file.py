@@ -143,12 +143,3 @@ class Fits:
             for a in range(len(temp_image[i])):
                 if 60 - thickness < np.sqrt(np.square(y_pos[0]-i) + np.square(x_pos[0]-a)) < thickness + 60:
                     temp_image[i, a] = np.max(temp_image)
-
-    # def scale(self, original_image=None):
-    #     if original_image:
-    #         temp_image = self._file.data
-    #     else:
-    #         temp_image = self._image
-    #     temp_image = temp_image - np.min(temp_image)
-    #     denominator = np.max(temp_image) - np.min(temp_image)
-    #     self._image = temp_image / denominator

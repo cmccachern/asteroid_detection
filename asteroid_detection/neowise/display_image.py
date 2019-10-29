@@ -21,7 +21,7 @@ disp = np.zeros((1016, 1016, 3))
 canvas_r = np.zeros((1016*3, 1016*3))
 canvas_g = np.zeros((1016*3, 1016*3))
 canvas_b = np.zeros((1016*3, 1016*3))
-#print(item[1]['asteroids'])
+
 for i in catalog:
     if item[1]['asteroids'][0]['date'][:9] == i[1]['asteroids'][0]['date'][:9]:
         for ast in range(len(i[1]['asteroids'])):
@@ -62,9 +62,7 @@ for idx in range(size):
 center = total/count
 dip.show()
 
-# overlay[::][::][0] = FITS[0].image()
-# overlay[::][::][1] = FITS[1].image()
-# overlay[::][::][2] = FITS[2].image()
+
 FITS[0].normalize()
 FITS[1].normalize()
 FITS[2].normalize()
@@ -72,17 +70,7 @@ FITS[0].circle_asteroid()
 im1 = FITS[0].image()
 im2 = FITS[1].image()
 im3 = FITS[2].image()
-# for x in range(1016):
-#     for y in range(1016):
-#         canvas_r[x + 1016][y + 1016] = im1[x][y]
-#         canvas_g[x + 1016][y + 1016] = im2[x][y]
-#         canvas_b[x + 1016][y + 1016] = im3[x][y]
-print(np.shape(canvas_r[0][0]), np.shape(canvas_g[0][0]), np.shape(canvas_b[0][0]))
-#overlay = np.stack((canvas_r, canvas_g, canvas_b), axis=2)
-# print(np.shape(overlay))
-# print(overlay[0][0])
-# dip.imshow(overlay)
-# dip.show()
+
 shift_x = [0, 0, 0]
 shift_y = [0, 0, 0]
 
@@ -100,19 +88,11 @@ for x in range(1016):
         canvas_r[y + 1016 + shift_y[0]][x + 1016 + shift_x[0]] = im1[y][x]
         canvas_g[y + 1016 + shift_y[1]][x + 1016 + shift_x[1]] = im2[y][x]
         canvas_b[y + 1016 + shift_y[2]][x + 1016 + shift_x[2]] = im3[y][x]
-    #x, y = FITS[idx].coordinates()
-    #img = FITS[idx].image()
-    #cutout.append(img[int(y_temp)-70:int(y_temp)+70, int(x_temp)-70:int(x_temp)+70])
-    #dip.subplot(3, 2, idx + 1)
-    #dip.title('image: ' + str(idx))
-    #dip.imshow(cutout[idx], cmap='gist_heat')
-print(np.shape(canvas_r[0][0]), np.shape(canvas_g[0][0]), np.shape(canvas_b[0][0]))
+
 overlay = np.stack((canvas_r, canvas_g, canvas_b), axis=2)
 for a in range(1016):
     for b in range(1016):
         for c in range(3):
             disp[a][b][c] = overlay[a + int(center_y) + 508][b + int(center_x) + 508][c]
-print(np.shape(overlay))
-print(overlay[0][0])
 dip.imshow(disp)
 dip.show()
