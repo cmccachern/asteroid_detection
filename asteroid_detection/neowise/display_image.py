@@ -6,6 +6,7 @@ import dippykit as dip
 import neowise_api as neo
 from fits_file import Fits
 import json
+import matplotlib as plt
 import numpy as np
 from astropy import wcs
 
@@ -16,8 +17,10 @@ rand = np.random.randint(len(catalog))
 item = catalog[int(rand)]
 cake = [item]
 
-# overlay = np.zeros((1016, 1016, 3))
-
+disp = np.zeros((1016, 1016, 3))
+canvas_r = np.zeros((1016*3, 1016*3))
+canvas_g = np.zeros((1016*3, 1016*3))
+canvas_b = np.zeros((1016*3, 1016*3))
 #print(item[1]['asteroids'])
 for i in catalog:
     if item[1]['asteroids'][0]['date'][:9] == i[1]['asteroids'][0]['date'][:9]:
@@ -46,7 +49,7 @@ for idx in range(size):
     FITS.append(Fits(IMAGE[idx], IMAGE_DETAILS[idx]))
     FITS[idx].filter_image()
     FITS[idx].scale_image()
-    FITS[idx].circle_asteroid()
+    #FITS[idx].circle_asteroid()
     ra, dec = FITS[idx].coordinates(world=True)
     total[0] += ra[0]
     total[1] += dec[0]
@@ -65,23 +68,51 @@ dip.show()
 FITS[0].normalize()
 FITS[1].normalize()
 FITS[2].normalize()
+FITS[0].circle_asteroid()
 im1 = FITS[0].image()
 im2 = FITS[1].image()
 im3 = FITS[2].image()
-print(im1[0][0], im2[0][0], im3[0][0])
-overlay = np.stack((im1, im2, im3), axis=2)
-print(overlay[0][0])
-dip.imshow(overlay)
-dip.show()
+# for x in range(1016):
+#     for y in range(1016):
+#         canvas_r[x + 1016][y + 1016] = im1[x][y]
+#         canvas_g[x + 1016][y + 1016] = im2[x][y]
+#         canvas_b[x + 1016][y + 1016] = im3[x][y]
+print(np.shape(canvas_r[0][0]), np.shape(canvas_g[0][0]), np.shape(canvas_b[0][0]))
+#overlay = np.stack((canvas_r, canvas_g, canvas_b), axis=2)
+# print(np.shape(overlay))
+# print(overlay[0][0])
+# dip.imshow(overlay)
+# dip.show()
+shift_x = [0, 0, 0]
+shift_y = [0, 0, 0]
 
-exit()
 for idx in range(size):
     coord = wcs.WCS(FITS[idx]._file)
     x_temp, y_temp = coord.wcs_world2pix(center[0], center[1], 0)
+    if idx == 0:
+        center_x, center_y = x_temp, y_temp
+        print(center_x, center_y)
+    else:
+        shift_x[idx], shift_y[idx] = int(center_x - x_temp), int(center_y - y_temp)
+
+for x in range(1016):
+    for y in range(1016):
+        canvas_r[y + 1016 + shift_y[0]][x + 1016 + shift_x[0]] = im1[y][x]
+        canvas_g[y + 1016 + shift_y[1]][x + 1016 + shift_x[1]] = im2[y][x]
+        canvas_b[y + 1016 + shift_y[2]][x + 1016 + shift_x[2]] = im3[y][x]
     #x, y = FITS[idx].coordinates()
-    img = FITS[idx].image()
-    cutout.append(img[int(y_temp)-70:int(y_temp)+70, int(x_temp)-70:int(x_temp)+70])
-    dip.subplot(3, 2, idx + 1)
-    dip.title('image: ' + str(idx))
-    dip.imshow(cutout[idx], cmap='gist_heat')
+    #img = FITS[idx].image()
+    #cutout.append(img[int(y_temp)-70:int(y_temp)+70, int(x_temp)-70:int(x_temp)+70])
+    #dip.subplot(3, 2, idx + 1)
+    #dip.title('image: ' + str(idx))
+    #dip.imshow(cutout[idx], cmap='gist_heat')
+print(np.shape(canvas_r[0][0]), np.shape(canvas_g[0][0]), np.shape(canvas_b[0][0]))
+overlay = np.stack((canvas_r, canvas_g, canvas_b), axis=2)
+for a in range(1016):
+    for b in range(1016):
+        for c in range(3):
+            disp[a][b][c] = overlay[a + int(center_y) + 508][b + int(center_x) + 508][c]
+print(np.shape(overlay))
+print(overlay[0][0])
+dip.imshow(disp)
 dip.show()
