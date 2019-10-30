@@ -8,7 +8,7 @@ import atpy
 import numpy as np
 import requests
 from astropy.io import fits
-import io
+import os
 import copy
 import wget
 
@@ -201,6 +201,7 @@ def download_fits(fits_name):
     # Reading from a Bytes stream produces an error, use tempfile instead
     with fits.open(file) as ff:
         data = copy.deepcopy(ff)
+    os.remove(file)
     return data[0]
 
 

@@ -49,6 +49,22 @@ class Fits:
             y_pos.append(y_temp)
         return x_pos, y_pos
 
+    def date(self):
+        """
+        average NaN pixels to reduce noise,
+
+        Returns
+        -------
+        [date] : numpy array of type string
+            datetime for asteroid in image
+        """
+        date = []
+        for astr in self._asteroids:
+            date_temp = astr['date']
+
+            date.append(date_temp)
+        return date
+
     @staticmethod
     def __avg(data, row, col):
         """
@@ -132,6 +148,12 @@ class Fits:
     def image(self):
         return self._image
 
+    def file(self):
+        return self._file
+
+    def name(self):
+        return self._name
+
     def circle_asteroid(self, original_image=None):
         if original_image:
             temp_image = self._file.data
@@ -141,5 +163,6 @@ class Fits:
         thickness = 1
         for i in range(len(temp_image)):
             for a in range(len(temp_image[i])):
-                if 60 - thickness < np.sqrt(np.square(y_pos[0]-i) + np.square(x_pos[0]-a)) < thickness + 60:
+                if 5 - thickness < np.sqrt(np.square(y_pos[0]-i) + np.square(x_pos[0]-a)) < thickness + 5:
                     temp_image[i, a] = np.max(temp_image)
+
