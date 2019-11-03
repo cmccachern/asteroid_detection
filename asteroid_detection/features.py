@@ -3,7 +3,7 @@ Functions for manipulating fits images to find asteroids.
 """
 
 #pylint: disable=no-member
-#pylint: unscriptable-object
+#pylint: disable=unsubscriptable-object 
 
 
 import numpy as np
