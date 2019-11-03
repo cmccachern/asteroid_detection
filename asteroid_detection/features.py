@@ -2,15 +2,17 @@
 Functions for manipulating fits images to find asteroids.
 """
 
-import matplotlib.pyplot as plt
+#pylint: disable=no-member
+#pylint: unscriptable-object
+
+
 import numpy as np
 from scipy.signal import correlate2d
 import cv2
 from astropy.io import fits
+import matplotlib.pyplot as plt
 
 from sdss import fits_from_rcf, jpg_from_rcf
-
-#pylint: disable=no-member
 
 def plot_histogram(img):
     """
