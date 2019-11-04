@@ -1,0 +1,12 @@
+asteroid first location: 
+[617.2861445403823, 45.244737436536525]
+asteroid first date: 
+2017-09-27 03:13:20.604
+asteroid second location: 
+[652.183550875895, 42.64982021182061]
+asteroid second location: 
+2017-09-27 00:04:50.547
+asteroid third location: 
+[582.959934276173, 48.88741162110102]
+asteroid third location: 
+2017-09-27 06:22:01.662
