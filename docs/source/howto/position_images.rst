@@ -17,7 +17,7 @@ The code to convert between world and pixel coordinates:
     # convert pixel coordinates to world coordinates
     ra_temp, dec_temp = coord.pix2world(x, y, 0)
 
-For more information `look here: https://docs.astropy.org/en/stable/wcs/`_.
+For more information `look at the astropy documentation <https://docs.astropy.org/en/stable/wcs/>`_.
 
 In order to translate images and overlay them, one world coordinate (ra, dec)
 is converted to pixel coordinates in each image. Two of the three images are then
