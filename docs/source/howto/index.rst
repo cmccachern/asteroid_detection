@@ -10,3 +10,4 @@ To unterstand the basics, visit :doc:`../tutorials/index`.
    sdss_data
    fits_files
    wise_data
+   position_images
