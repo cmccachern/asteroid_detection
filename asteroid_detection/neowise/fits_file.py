@@ -154,15 +154,16 @@ class Fits:
     def name(self):
         return self._name
 
-    def circle_asteroid(self, original_image=None):
+    def circle_asteroid(self, radius=5, original_image=None):
         if original_image:
             temp_image = self._file.data
         else:
             temp_image = self._image
         x_pos, y_pos = self.coordinates()
         thickness = 1
-        for i in range(len(temp_image)):
-            for a in range(len(temp_image[i])):
-                if 5 - thickness < np.sqrt(np.square(y_pos[0]-i) + np.square(x_pos[0]-a)) < thickness + 5:
-                    temp_image[i, a] = np.max(temp_image)
+        for col in range(len(temp_image)):
+            for pixel in range(len(temp_image[col])):
+                if radius - thickness < np.sqrt(np.square(y_pos[0]-col) + np.square(x_pos[0]-pixel)) \
+                        < thickness + radius:
+                    temp_image[col, pixel] = np.max(temp_image)
 
