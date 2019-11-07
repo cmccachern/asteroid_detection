@@ -5,3 +5,4 @@ astropy==3.2.1
 pillow==6.1.0
 dippykit==2.0.2
 ATpy==0.9.7
+wget==3.2
