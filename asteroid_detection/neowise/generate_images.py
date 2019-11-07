@@ -24,6 +24,10 @@ CATALOG = list(CATALOG.items())
 
 
 def generate_images():
+    """
+     downloads, combines, and saves images
+
+     """
     while GENERATE:
         print('Beginning find and generate image...')
         random_catalog_index = np.random.randint(len(CATALOG))
@@ -62,7 +66,6 @@ def generate_images():
         size = 3
         ast = []
         date = []
-        cutout = []
 
         for idx in range(size):
             name[idx] = image_details[idx][0]
@@ -72,11 +75,11 @@ def generate_images():
             fits[idx].scale_image()
             fits[idx].name()
             rad_asc, declination = fits[idx].coordinates(world=True)
-            x, y = fits[idx].coordinates(world=False)
+            x_coord, y_coord = fits[idx].coordinates(world=False)
             date_temp = fits[idx].date()
             total[0] += rad_asc[0]
             total[1] += declination[0]
-            ast.append([x[0], y[0]])
+            ast.append([x_coord[0], y_coord[0]])
             date.append(date_temp[0])
             count += 1
             fits[idx].normalize()
@@ -147,9 +150,9 @@ def generate_images():
         print('green asteroid position: ', asteroid2)
         print('blue asteroid position: ', asteroid3)
 
-        if asteroid1[0] > 0 and asteroid2[0] > 0 and asteroid3[0] > 0 \
-                and asteroid1[1] > 0 and asteroid2[1] > 0 and asteroid3[1] > 0 \
+        if np.max(asteroid1) > 0 and np.max(asteroid2) > 0 and np.max(asteroid3) > 0 \
                 and horizontal_overlap > 200 and vertical_overlap > 200:
+                # and asteroid1[1] > 0 and asteroid2[1] > 0 and asteroid3[1] > 0 \
             name = fits[0].name()
             print('saving text file...')
             with open("images/" + str(name) + ".txt", 'w') as info:

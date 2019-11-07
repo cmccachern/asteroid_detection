@@ -3,10 +3,10 @@ Get data from the Neowise survey.
 """
 import json
 import tempfile
-import requests
-from astropy.io import fits
 import os
 import copy
+from astropy.io import fits
+import requests
 import numpy as np
 import atpy
 import wget
