@@ -1,15 +1,15 @@
 """
-example code, will show a random FITS image
+example code, will show a random fits image
 """
 
-import neowise_api as neo
-from fits_file import Fits
 import json
 import matplotlib.image as mpimg
 import numpy as np
 from astropy import wcs
 import warnings
 from astropy.utils.exceptions import AstropyWarning
+import neowise_api as neo
+from fits_file import Fits
 
 WIDTH = 1016
 HEIGHT = 1016
@@ -50,52 +50,52 @@ def generate_images():
         if len(catalog_items) < 3:
             break
 
-        NAME = ['' for index in range(5)]
-        IMAGE = []
-        FITS = []
-        IMAGE_DETAILS = [catalog_item for catalog_item in catalog_items]
+        name = ['' for index in range(5)]
+        images = []
+        fits = []
+        image_details = [catalog_item for catalog_item in catalog_items]
         total = np.zeros(2)
         center = [0, 0]
         count = 0
-        ra = 0
-        dec = 0
+        rad_asc = 0
+        declination = 0
         size = 3
         ast = []
         date = []
         cutout = []
 
         for idx in range(size):
-            NAME[idx] = IMAGE_DETAILS[idx][0]
-            IMAGE.append(neo.download_fits(NAME[idx]))
-            FITS.append(Fits(IMAGE[idx], IMAGE_DETAILS[idx]))
-            FITS[idx].filter_image()
-            FITS[idx].scale_image()
-            FITS[idx].name()
-            ra, dec = FITS[idx].coordinates(world=True)
-            x, y = FITS[idx].coordinates(world=False)
-            date_temp = FITS[idx].date()
-            total[0] += ra[0]
-            total[1] += dec[0]
+            name[idx] = image_details[idx][0]
+            images.append(neo.download_fits(name[idx]))
+            fits.append(Fits(images[idx], image_details[idx]))
+            fits[idx].filter_image()
+            fits[idx].scale_image()
+            fits[idx].name()
+            rad_asc, declination = fits[idx].coordinates(world=True)
+            x, y = fits[idx].coordinates(world=False)
+            date_temp = fits[idx].date()
+            total[0] += rad_asc[0]
+            total[1] += declination[0]
             ast.append([x[0], y[0]])
             date.append(date_temp[0])
             count += 1
-            FITS[idx].normalize()
+            fits[idx].normalize()
             print('retrieved image ', idx + 1, '/', size)
         center = total/count
 
-        if len(FITS) < 3:
-            print('break!, not enough FITS files')
+        if len(fits) < 3:
+            print('break!, not enough fits files')
             break
 
-        im1 = FITS[0].image()
-        im2 = FITS[1].image()
-        im3 = FITS[2].image()
+        im1 = fits[0].image()
+        im2 = fits[1].image()
+        im3 = fits[2].image()
 
         shift_x = [0, 0, 0]
         shift_y = [0, 0, 0]
 
         for idx in range(size):
-            coord = wcs.WCS(FITS[idx].file())
+            coord = wcs.WCS(fits[idx].file())
             x_temp, y_temp = coord.wcs_world2pix(center[0], center[1], 0)
             if idx == 0:
                 center_x, center_y = x_temp, y_temp
@@ -150,7 +150,7 @@ def generate_images():
         if asteroid1[0] > 0 and asteroid2[0] > 0 and asteroid3[0] > 0 \
                 and asteroid1[1] > 0 and asteroid2[1] > 0 and asteroid3[1] > 0 \
                 and horizontal_overlap > 200 and vertical_overlap > 200:
-            name = FITS[0].name()
+            name = fits[0].name()
             print('saving text file...')
             with open("images/" + str(name) + ".txt", 'w') as info:
                 info.write("asteroid first location: " + "\n" + str(asteroid1) + "\n")
