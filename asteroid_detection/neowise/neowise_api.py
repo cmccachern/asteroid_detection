@@ -3,12 +3,12 @@ Get data from the Neowise survey.
 """
 import json
 import tempfile
-import atpy
 import numpy as np
 import requests
 from astropy.io import fits
 import os
 import copy
+import atpy
 import wget
 
 def search_points(**kwargs):

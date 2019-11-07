@@ -210,7 +210,7 @@ class Fits:
             temp_image = self._image
         x_pos, y_pos = self.coordinates()
         thickness = 1
-        for col in range(len(temp_image)):
+        for col in enumerate(temp_image):
             for pixel in range(len(temp_image[col])):
                 if radius - thickness < \
                         np.sqrt(np.square(y_pos[0]-col) + np.square(x_pos[0]-pixel)) < \
