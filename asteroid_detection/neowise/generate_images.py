@@ -5,37 +5,37 @@ example code, will show a random FITS image
 import neowise_api as neo
 from fits_file import Fits
 import json
-import matplotlib as plt
+import matplotlib.image as mpimg
 import numpy as np
 from astropy import wcs
 import warnings
 from astropy.utils.exceptions import AstropyWarning
 
-width = 1016
-height = 1016
-catalog_items = []
-update = True
-generate = True
+WIDTH = 1016
+HEIGHT = 1016
+UPDATE = True
+GENERATE = True
 
 warnings.simplefilter('ignore', category=AstropyWarning)
 
-with open('asteroid_catalog.json', 'r') as file:
-    catalog = json.load(file)
-catalog = list(catalog.items())
-placeholder = 'ab'
+with open('asteroid_CATALOG.json', 'r') as file:
+    CATALOG = json.load(file)
+CATALOG = list(CATALOG.items())
 
-while update:
-    while generate:
+
+def generate_images():
+    while GENERATE:
         print('Beginning find and generate image...')
-        random_catalog_index = np.random.randint(len(catalog))
-        item = catalog[int(random_catalog_index)]
+        random_catalog_index = np.random.randint(len(CATALOG))
+        item = CATALOG[int(random_catalog_index)]
         catalog_items = [item]
 
-        canvas_r = np.zeros((width*3, height*3))
-        canvas_g = np.zeros((width*3, height*3))
-        canvas_b = np.zeros((width*3, height*3))
+        canvas_r = np.zeros((WIDTH*3, HEIGHT*3))
+        canvas_g = np.zeros((WIDTH*3, HEIGHT*3))
+        canvas_b = np.zeros((WIDTH*3, HEIGHT*3))
+        placeholder = 'ab'
 
-        for image in catalog:
+        for image in CATALOG:
             if item[1]['asteroids'][0]['date'][:9] == image[1]['asteroids'][0]['date'][:9]:
                 if item[1]['asteroids'][0]['date'][11:13] != \
                         image[1]['asteroids'][0]['date'][11:13]:
@@ -104,21 +104,21 @@ while update:
         print('images are shifted in x direction: ', shift_x,
               '\nimages are shifted in y direction: ', shift_y)
 
-        if np.max(shift_x) > width or np.max(shift_y) > height:
+        if np.max(shift_x) > WIDTH or np.max(shift_y) > HEIGHT:
             print('break!, shift is greater than 1016')
             break
 
-        for col in range(width):
-            for pixel in range(height):
-                canvas_r[pixel + height + shift_y[0]][col + width + shift_x[0]]\
+        for col in range(WIDTH):
+            for pixel in range(HEIGHT):
+                canvas_r[pixel + HEIGHT + shift_y[0]][col + WIDTH + shift_x[0]]\
                     = im1[pixel][col]
-                canvas_g[pixel + height + shift_y[1]][col + width + shift_x[1]]\
+                canvas_g[pixel + HEIGHT + shift_y[1]][col + WIDTH + shift_x[1]]\
                     = im2[pixel][col]
-                canvas_b[pixel + height + shift_y[2]][col + width + shift_x[2]]\
+                canvas_b[pixel + HEIGHT + shift_y[2]][col + WIDTH + shift_x[2]]\
                     = im3[pixel][col]
 
-        horizontal_overlap = width - np.abs(np.max(shift_x) - np.min(shift_x))
-        vertical_overlap = height - np.abs(np.max(shift_y) - np.min(shift_y))
+        horizontal_overlap = WIDTH - np.abs(np.max(shift_x) - np.min(shift_x))
+        vertical_overlap = HEIGHT - np.abs(np.max(shift_y) - np.min(shift_y))
         print('combined image size: ', horizontal_overlap, 'x', vertical_overlap)
 
         if horizontal_overlap <= 0 or vertical_overlap <= 0:
@@ -131,8 +131,8 @@ while update:
         for col in range(vertical_overlap):
             for row in range(horizontal_overlap):
                 for layer in range(3):
-                    disp[col][row][layer] = overlay[col + np.max(shift_y) + width,
-                                                    row + np.max(shift_x) + height, layer]
+                    disp[col][row][layer] = overlay[col + np.max(shift_y) + WIDTH,
+                                                    row + np.max(shift_x) + HEIGHT, layer]
 
         asteroid1 = [ast[0][0] - (np.max(shift_x) + shift_x[0]),
                      ast[0][1] - (np.max(shift_y)) + shift_y[0]]
@@ -161,5 +161,9 @@ while update:
                 info.write("asteroid third location: " + "\n" + str(ast3date))
             print(name + '.txt', 'text file saved')
             print('saving image...')
-            plt.image.imsave("images/" + name + ".png", disp)
+            mpimg.imsave("images/" + name + ".png", disp)
             print(name + '.png', 'image saved')
+
+
+while UPDATE:
+    generate_images()
