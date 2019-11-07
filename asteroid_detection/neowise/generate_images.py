@@ -152,7 +152,7 @@ while update:
                 and horizontal_overlap > 200 and vertical_overlap > 200:
             name = FITS[0].name()
             print('saving text file...')
-            with open("neowise/" + str(name) + ".txt", 'w') as info:
+            with open("images/" + str(name) + ".txt", 'w') as info:
                 info.write("asteroid first location: " + "\n" + str(asteroid1) + "\n")
                 info.write("asteroid first date: " + "\n" + str(ast1date) + "\n")
                 info.write("asteroid second location: " + "\n" + str(asteroid2) + "\n")
@@ -161,5 +161,5 @@ while update:
                 info.write("asteroid third location: " + "\n" + str(ast3date))
             print(name + '.txt', 'text file saved')
             print('saving image...')
-            plt.image.imsave("neowise/" + name + ".png", disp)
+            plt.image.imsave("images/" + name + ".png", disp)
             print(name + '.png', 'image saved')

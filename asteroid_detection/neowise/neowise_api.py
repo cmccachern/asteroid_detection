@@ -3,7 +3,6 @@ Get data from the Neowise survey.
 """
 import json
 import tempfile
-import matplotlib.pyplot as plt
 import atpy
 import numpy as np
 import requests

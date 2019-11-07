@@ -122,9 +122,16 @@ class Fits:
                             self._image[x_index, y_index] = new_pixel
 
     def scale_image(self, min_factor=None, max_factor=None, original_image=None):
+        """
+        Scales image intensity from min_factor to max_factor
+
+        Returns
+        -------
+        _image : numpy array
+            scaled image
+        """
         if original_image:
             temp_image = self._file.data
-            print('wtf')
         else:
             temp_image = self._image
         temp_image[temp_image < np.median(temp_image)] = np.median(temp_image)
@@ -135,8 +142,17 @@ class Fits:
             min_factor = 0.3
         self._image = np.clip(temp_image, min_factor * np.max(temp_image),
                               max_factor * np.max(temp_image))
+        return self._image
 
     def normalize(self, original_image=None):
+        """
+        Normalize the intensity values of image
+
+        Returns
+        -------
+        _image : numpy array
+            normalized image
+        """
         if original_image:
             temp_image = self._file.data
         else:
@@ -144,17 +160,50 @@ class Fits:
         temp_image = temp_image - np.min(temp_image)
         denominator = np.max(temp_image) - np.min(temp_image)
         self._image = temp_image / denominator
+        return self._image
 
     def image(self):
+        """
+        returns the image from the class
+
+        Returns
+        -------
+        _image : numpy array
+            current image
+        """
         return self._image
 
     def file(self):
+        """
+        returns the Fits file from the class
+
+        Returns
+        -------
+        _file : .FITS file
+            original file
+        """
         return self._file
 
     def name(self):
+        """
+        returns the name of the image
+
+        Returns
+        -------
+        _name : string
+            image name
+        """
         return self._name
 
     def circle_asteroid(self, radius=5, original_image=None):
+        """
+        circles the asteroid in the image
+
+        Returns
+        -------
+        _image : numpy array
+            image with circle
+        """
         if original_image:
             temp_image = self._file.data
         else:
@@ -163,7 +212,8 @@ class Fits:
         thickness = 1
         for col in range(len(temp_image)):
             for pixel in range(len(temp_image[col])):
-                if radius - thickness < np.sqrt(np.square(y_pos[0]-col) + np.square(x_pos[0]-pixel)) \
-                        < thickness + radius:
+                if radius - thickness < \
+                        np.sqrt(np.square(y_pos[0]-col) + np.square(x_pos[0]-pixel)) < \
+                        thickness + radius:
                     temp_image[col, pixel] = np.max(temp_image)
-
+        return temp_image
