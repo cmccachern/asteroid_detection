@@ -39,7 +39,7 @@ def pick_images():
     for image in CATALOG:
         if (item[1]['asteroids'][0]['date'][:9] == image[1]['asteroids'][0]['date'][:9]) and \
                 (item[1]['asteroids'][0]['date'][11:13] !=
-                    image[1]['asteroids'][0]['date'][11:13]):
+                 image[1]['asteroids'][0]['date'][11:13]):
             if image[1]['asteroids'][0]['date'][11:13] != placeholder:
                 placeholder = image[1]['asteroids'][0]['date'][11:13]
                 for ast in range(len(image[1]['asteroids'])):
@@ -58,7 +58,7 @@ def download_images(catalog_items):
     images = []
     fits = []
     image_details = [cat_item for cat_item in catalog_items]
-    total = np.zeros(2)
+    center = np.zeros(2)
     count = 0
     asteroid_xy = []
     date = []
@@ -71,17 +71,15 @@ def download_images(catalog_items):
         fits[idx].scale_image()
         fits[idx].name()
         rad_asc, declination = fits[idx].coordinates(world=True)
+        center[0] = rad_asc[0]
+        center[1] = declination[0]
         x_coord, y_coord = fits[idx].coordinates(world=False)
         date_temp = fits[idx].date()
-        total[0] += rad_asc[0]
-        total[1] += declination[0]
         asteroid_xy.append([x_coord[0], y_coord[0]])
         date.append(date_temp[0])
         count += 1
         fits[idx].normalize()
         print('retrieved image ', idx + 1, '/', SIZE)
-    center = total/count
-
     return asteroid_xy, date, center, fits
 
 
