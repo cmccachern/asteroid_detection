@@ -17,6 +17,7 @@ UPDATE = True
 GENERATE = True
 SIZE = 3
 
+
 warnings.simplefilter('ignore', category=AstropyWarning)
 
 with open('asteroid_CATALOG.json', 'r') as file:
@@ -112,21 +113,16 @@ def combine_images(asteroid_xy, fits, shift_x, shift_y):
      combines images
 
      """
-    canvas_r = np.zeros((WIDTH*3, HEIGHT*3))
-    canvas_g = np.zeros((WIDTH*3, HEIGHT*3))
-    canvas_b = np.zeros((WIDTH*3, HEIGHT*3))
-    im1 = fits[0].image()
-    im2 = fits[1].image()
-    im3 = fits[2].image()
+    fits_image = [fits[0].image(), fits[1].image(), fits[2].image()]
 
     for col in range(WIDTH):
         for pixel in range(HEIGHT):
-            canvas_r[pixel + HEIGHT + shift_y[0]][col + WIDTH + shift_x[0]]\
-                = im1[pixel][col]
-            canvas_g[pixel + HEIGHT + shift_y[1]][col + WIDTH + shift_x[1]]\
-                = im2[pixel][col]
-            canvas_b[pixel + HEIGHT + shift_y[2]][col + WIDTH + shift_x[2]]\
-                = im3[pixel][col]
+            CANVAS_R[pixel + HEIGHT + shift_y[0]][col + WIDTH + shift_x[0]]\
+                = fits_image[0][pixel][col]
+            CANVAS_G[pixel + HEIGHT + shift_y[1]][col + WIDTH + shift_x[1]]\
+                = fits_image[1][pixel][col]
+            CANVAS_B[pixel + HEIGHT + shift_y[2]][col + WIDTH + shift_x[2]]\
+                = fits_image[2][pixel][col]
 
     horizontal_overlap = WIDTH - np.abs(np.max(shift_x) - np.min(shift_x))
     vertical_overlap = HEIGHT - np.abs(np.max(shift_y) - np.min(shift_y))
@@ -136,11 +132,11 @@ def combine_images(asteroid_xy, fits, shift_x, shift_y):
     if horizontal_overlap <= 0 or vertical_overlap <= 0:
         print('break!, overlap is less than 0')
         restart = True
-        return 0, 0, 0, 0, restart
+        return 0, 0, restart
 
     disp = np.zeros((vertical_overlap, horizontal_overlap, 3))
 
-    overlay = np.stack((canvas_r, canvas_g, canvas_b), axis=2)
+    overlay = np.stack((CANVAS_R, CANVAS_G, CANVAS_B), axis=2)
     for col in range(vertical_overlap):
         for row in range(horizontal_overlap):
             for layer in range(3):
@@ -153,6 +149,7 @@ def combine_images(asteroid_xy, fits, shift_x, shift_y):
                  asteroid_xy[1][1] - (np.max(shift_y)) + shift_y[1]]
     asteroid3 = [asteroid_xy[2][0] - (np.max(shift_x)) + shift_x[2],
                  asteroid_xy[2][1] - (np.max(shift_y)) + shift_y[2]]
+    asteroid = [asteroid1, asteroid2, asteroid3]
 
     print('red asteroid position: ', asteroid1)
     print('green asteroid position: ', asteroid2)
@@ -162,10 +159,10 @@ def combine_images(asteroid_xy, fits, shift_x, shift_y):
             or horizontal_overlap < 200 or vertical_overlap < 200:
         restart = True
 
-    return asteroid1, asteroid2, asteroid3, disp, restart
+    return asteroid, disp, restart
 
 
-def save_files(date, asteroid1, asteroid2, asteroid3, fits, disp):
+def save_files(date, asteroid, fits, disp):
     """
      saves files
 
@@ -177,11 +174,11 @@ def save_files(date, asteroid1, asteroid2, asteroid3, fits, disp):
     name = fits[0].name()
     print('saving text file...')
     with open("images/" + str(name) + ".txt", 'w') as info:
-        info.write("asteroid first location: " + "\n" + str(asteroid1) + "\n")
+        info.write("asteroid first location: " + "\n" + str(asteroid[0]) + "\n")
         info.write("asteroid first date: " + "\n" + str(ast1date) + "\n")
-        info.write("asteroid second location: " + "\n" + str(asteroid2) + "\n")
+        info.write("asteroid second location: " + "\n" + str(asteroid[1]) + "\n")
         info.write("asteroid second location: " + "\n" + str(ast2date) + "\n")
-        info.write("asteroid third location: " + "\n" + str(asteroid3) + "\n")
+        info.write("asteroid third location: " + "\n" + str(asteroid[2]) + "\n")
         info.write("asteroid third location: " + "\n" + str(ast3date))
     print(name + '.txt', 'text file saved')
     print('saving image...')
@@ -192,25 +189,28 @@ def save_files(date, asteroid1, asteroid2, asteroid3, fits, disp):
 while UPDATE:
     while GENERATE:
 
-        picked_catalog_items = pick_images()
-        if len(picked_catalog_items) < 3:
+        CANVAS_R = np.zeros((WIDTH * 3, HEIGHT * 3))
+        CANVAS_G = np.zeros((WIDTH * 3, HEIGHT * 3))
+        CANVAS_B = np.zeros((WIDTH * 3, HEIGHT * 3))
+
+        PICKED_IMAGES = pick_images()
+        if len(PICKED_IMAGES) < 3:
             break
 
-        asteroid_positions, date_images, center_asteroid, fits_list = download_images(picked_catalog_items)
-        if len(fits_list) < 3:
+        ASTEROID_POSITIONS, DATE_IMAGES, CENTER_ASTEROID, FITS_LIST = \
+            download_images(PICKED_IMAGES)
+        if len(FITS_LIST) < 3:
             print('break!, not enough fits files')
             break
 
-        hor_shift, ver_shift = shift_images(center_asteroid, fits_list)
-        if np.max(hor_shift) > WIDTH or np.max(ver_shift) > HEIGHT:
+        HOR_SHIFT, VER_SHIFT = shift_images(CENTER_ASTEROID, FITS_LIST)
+        if np.max(HOR_SHIFT) > WIDTH or np.max(VER_SHIFT) > HEIGHT:
             print('break!, shift is greater than 1016')
             break
 
-        ast_1, ast_2, ast_3, final_image, redo = \
-            combine_images(asteroid_positions, fits_list, hor_shift, ver_shift)
-        if redo:
+        ASTEROID, FINAL_IMAGE, REDO = \
+            combine_images(ASTEROID_POSITIONS, FITS_LIST, HOR_SHIFT, VER_SHIFT)
+        if REDO:
             break
 
-        save_files(date_images, ast_1, ast_2, ast_3, fits_list, final_image)
-
-
+        save_files(DATE_IMAGES, ASTEROID, FITS_LIST, FINAL_IMAGE)
