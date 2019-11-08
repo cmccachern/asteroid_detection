@@ -37,15 +37,15 @@ def pick_images():
 
     placeholder = 'ab'
     for image in CATALOG:
-        if item[1]['asteroids'][0]['date'][:9] == image[1]['asteroids'][0]['date'][:9]:
-            if item[1]['asteroids'][0]['date'][11:13] != \
-                    image[1]['asteroids'][0]['date'][11:13]:
-                if image[1]['asteroids'][0]['date'][11:13] != placeholder:
-                    placeholder = image[1]['asteroids'][0]['date'][11:13]
-                    for ast in range(len(image[1]['asteroids'])):
-                        if item[1]['asteroids'][0]['name'] == \
-                                image[1]['asteroids'][ast]['name']:
-                            catalog_items.append(image)
+        if (item[1]['asteroids'][0]['date'][:9] == image[1]['asteroids'][0]['date'][:9]) and \
+                (item[1]['asteroids'][0]['date'][11:13] !=
+                    image[1]['asteroids'][0]['date'][11:13]):
+            if image[1]['asteroids'][0]['date'][11:13] != placeholder:
+                placeholder = image[1]['asteroids'][0]['date'][11:13]
+                for ast in range(len(image[1]['asteroids'])):
+                    if item[1]['asteroids'][0]['name'] == \
+                            image[1]['asteroids'][ast]['name']:
+                        catalog_items.append(image)
     return catalog_items
 
 
@@ -54,7 +54,7 @@ def download_images(catalog_items):
      downloads, images
 
      """
-    name = ['' for index in range(5)]
+    name = [''] * 5
     images = []
     fits = []
     image_details = [cat_item for cat_item in catalog_items]
@@ -108,6 +108,21 @@ def shift_images(center, fits):
     return shift_x, shift_y
 
 
+def overlap(vertical_overlap, horizontal_overlap, shift_x, shift_y):
+    """
+        combines images
+
+    """
+    disp = np.zeros((vertical_overlap, horizontal_overlap, 3))
+    overlay = np.stack((CANVAS_R, CANVAS_G, CANVAS_B), axis=2)
+    for col in range(vertical_overlap):
+        for row in range(horizontal_overlap):
+            for layer in range(3):
+                disp[col][row][layer] = overlay[col + np.max(shift_y) + WIDTH,
+                                                row + np.max(shift_x) + HEIGHT, layer]
+    return disp
+
+
 def combine_images(asteroid_xy, fits, shift_x, shift_y):
     """
      combines images
@@ -128,38 +143,27 @@ def combine_images(asteroid_xy, fits, shift_x, shift_y):
     vertical_overlap = HEIGHT - np.abs(np.max(shift_y) - np.min(shift_y))
     print('combined image size: ', horizontal_overlap, 'x', vertical_overlap)
 
-    restart = False
     if horizontal_overlap <= 0 or vertical_overlap <= 0:
         print('break!, overlap is less than 0')
-        restart = True
-        return 0, 0, restart
+        return 0, 0, True
+    display = overlap(vertical_overlap, horizontal_overlap, shift_x, shift_y)
 
-    disp = np.zeros((vertical_overlap, horizontal_overlap, 3))
+    asteroid = [[asteroid_xy[0][0] - (np.max(shift_x) + shift_x[0]),
+                 asteroid_xy[0][1] - (np.max(shift_y)) + shift_y[0]],
+                [asteroid_xy[1][0] - (np.max(shift_x)) + shift_x[1],
+                 asteroid_xy[1][1] - (np.max(shift_y)) + shift_y[1]],
+                [asteroid_xy[2][0] - (np.max(shift_x)) + shift_x[2],
+                 asteroid_xy[2][1] - (np.max(shift_y)) + shift_y[2]]]
 
-    overlay = np.stack((CANVAS_R, CANVAS_G, CANVAS_B), axis=2)
-    for col in range(vertical_overlap):
-        for row in range(horizontal_overlap):
-            for layer in range(3):
-                disp[col][row][layer] = overlay[col + np.max(shift_y) + WIDTH,
-                                                row + np.max(shift_x) + HEIGHT, layer]
+    print('red asteroid position: ', asteroid[0])
+    print('green asteroid position: ', asteroid[1])
+    print('blue asteroid position: ', asteroid[2])
 
-    asteroid1 = [asteroid_xy[0][0] - (np.max(shift_x) + shift_x[0]),
-                 asteroid_xy[0][1] - (np.max(shift_y)) + shift_y[0]]
-    asteroid2 = [asteroid_xy[1][0] - (np.max(shift_x)) + shift_x[1],
-                 asteroid_xy[1][1] - (np.max(shift_y)) + shift_y[1]]
-    asteroid3 = [asteroid_xy[2][0] - (np.max(shift_x)) + shift_x[2],
-                 asteroid_xy[2][1] - (np.max(shift_y)) + shift_y[2]]
-    asteroid = [asteroid1, asteroid2, asteroid3]
-
-    print('red asteroid position: ', asteroid1)
-    print('green asteroid position: ', asteroid2)
-    print('blue asteroid position: ', asteroid3)
-
-    if np.max(asteroid1) < 0 or np.max(asteroid2) < 0 or np.max(asteroid3) < 0 \
+    if np.max(asteroid[0]) < 0 or np.max(asteroid[1]) < 0 or np.max(asteroid[2]) < 0 \
             or horizontal_overlap < 200 or vertical_overlap < 200:
-        restart = True
+        return asteroid, display, True
 
-    return asteroid, disp, restart
+    return asteroid, display, False
 
 
 def save_files(date, asteroid, fits, disp):
