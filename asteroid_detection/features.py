@@ -213,8 +213,8 @@ def find_asteroids(images, crop_width=50, crop_height=50):
 
         corl_maxes_rg.append(corl_max_rg)
         corl_maxes_ri.append(corl_max_ri)
-        if np.sum(np.abs(corl_max_rg)) > 2 and \
-           np.sum(np.abs(corl_max_ri)) > 2 and \
+        if np.sum(np.abs(corl_max_rg)) > 1 and \
+           np.sum(np.abs(corl_max_ri)) > 1 and \
            np.sum(np.abs(corl_max_rg - corl_max_ri)) > 1:
             print(corl_max_rg, corl_max_ri)
             asteroid_candidates.append(obj)
@@ -246,7 +246,6 @@ def main():
 
 
     fits_file = fits_from_rcf(run, camcol, field)
-
     
     w = wcs.WCS(fits_file["r"][0].header)
     x, y = 0, 0
@@ -265,14 +264,23 @@ def main():
         images[band] = np.roll(img, [x_shift, y_shift], [1,0])
 
     stack_images(images) 
+#    print("Shape: {}".format(images["r"].shape))
+    
     asteroids = find_asteroids(images)
         #plt.imshow(cropped_images["r"])
         #plt.show()
     print(asteroids)
 
     img = jpg_from_rcf(run, camcol, field)#plt.imread("image.jpg")
+    shape = images["r"].shape
+    img = np.flipud(img)
+    img = cv2.resize(np.array(img), (shape[1], shape[0]))
     plt.figure()
-    plt.imshow(np.flipud(img))
+    plt.imshow(img)
+    plt.figure()
+    for i in range(len(asteroids)):
+        plt.figure()
+        plt.imshow(crop(img, asteroids[i], 100,100))
 
     #plt.figure()
     #plt.imshow(np.log10(fits_file["r"][0].data))
