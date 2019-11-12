@@ -8,6 +8,9 @@ import requests
 from PIL import Image
 
 from astropy.io import fits
+import requests_cache
+
+requests_cache.install_cache('sdss_cache')
 
 def jpg_from_rcf(run, camcol, field):
     """
