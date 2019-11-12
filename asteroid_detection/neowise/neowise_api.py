@@ -3,11 +3,13 @@ Get data from the Neowise survey.
 """
 import json
 import tempfile
-import numpy as np
-import requests
+import os
+import copy
 from astropy.io import fits
+import requests
+import numpy as np
 import atpy
-
+import wget
 
 def search_points(**kwargs):
     """
@@ -192,14 +194,14 @@ def download_fits(fits_name):
         '{scangrp:s}/{scan_id:s}/{frame_num:03d}/{scan_id:s}{frame_num:03d}-w{band:1d}' +
         '-int-1b.fits', **params)
     url = 'https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/' + path
-    response = requests.get(url)
-    response.raise_for_status()
+
+    file = wget.download(url)
 
     # Reading from a Bytes stream produces an error, use tempfile instead
-    with tempfile.NamedTemporaryFile() as ff:
-        ff.write(response.content)
-        fits_file = fits.open(ff.name)
-    return fits_file[0]
+    with fits.open(file) as ff:
+        data = copy.deepcopy(ff)
+    os.remove(file)
+    return data[0]
 
 
 # fits directory = https://irsa.ipac.caltech.edu/ibe/data/wise/neowiser/p1bm_frm/
