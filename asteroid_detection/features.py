@@ -10,7 +10,9 @@ import numpy as np
 from scipy.signal import correlate2d
 import cv2
 from astropy.io import fits
+from astropy import wcs
 import matplotlib.pyplot as plt
+import logging
 
 from sdss import fits_from_rcf, jpg_from_rcf
 
@@ -85,6 +87,11 @@ def plot_rgb(r_fits, g_fits, b_fits, object_getter=asteroid):
     data = np.dstack(data)
     plt.figure()
     plt.imshow(data)
+
+def stack_images(data):
+    img = np.dstack([data["r"], data["g"], data["i"]])
+    plt.figure()
+    plt.imshow(img)
 
 def show_corls():
     """
@@ -186,7 +193,12 @@ def find_asteroids(images, crop_width=50, crop_height=50):
     """
     Use a correlation technique to find asteroids in images.
     """
+    corl_maxes_rg = []
+    corl_maxes_ri = []
+    logging.info("Finding objects in image")
     objects = find_objects(images["r"])
+    logging.info("{} objects found".format(len(objects)))
+    logging.info("Running classifier on objects to find asteroids")
     asteroid_candidates = []
     for obj in objects:
         try:
@@ -194,45 +206,77 @@ def find_asteroids(images, crop_width=50, crop_height=50):
         except OutOfBounds:
             continue
 
-        corl_max_rg = max_corl_offset(cropped_images["r"], cropped_images["g"]) - np.array([10, 21])
-        corl_max_ri = max_corl_offset(cropped_images["r"], cropped_images["i"]) - np.array([20, 26])
+        corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"])) - np.array([25, 25])
+        corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"])) - np.array([25, 25])
+        #plt.imshow(cropped_images["r"])
+        #plt.show()
 
-        if np.sum(np.abs(corl_max_rg)) > 1 and \
-           np.sum(np.abs(corl_max_ri)) > 1 and \
+        corl_maxes_rg.append(corl_max_rg)
+        corl_maxes_ri.append(corl_max_ri)
+        if np.sum(np.abs(corl_max_rg)) > 2 and \
+           np.sum(np.abs(corl_max_ri)) > 2 and \
            np.sum(np.abs(corl_max_rg - corl_max_ri)) > 1:
+            print(corl_max_rg, corl_max_ri)
             asteroid_candidates.append(obj)
 
+    corl_maxes_rg = np.array(corl_maxes_rg)
+    corl_maxes_ri = np.array(corl_maxes_ri)
+    plt.figure()
+    plt.scatter(corl_maxes_rg[:, 0], corl_maxes_rg[:,1])
+    plt.figure()
+    plt.scatter(corl_maxes_ri[:, 0], corl_maxes_ri[:,1])
+    #plt.show()
+
     return np.array(asteroid_candidates)
+
+
 
 def main():
     """
     Main function.
     """
+    logging.basicConfig(level=logging.INFO)
 
-    run = 756#752
+    run = 752#756#752
     camcol = 1
-    field = 314#373
+    field = 373#314#373
+
+    logging.info("Downloading FITS files")
+
+
 
     fits_file = fits_from_rcf(run, camcol, field)
-    images = {"r": fits_file["r"][0].data,
-              "g": fits_file["g"][0].data,
-              "i": fits_file["i"][0].data,
-             }
 
-    #images = {"r": data_from_fits("752_1_373_r.fits"),
-    #          "g": data_from_fits("752_1_373_g.fits"),
-    #          "i": data_from_fits("752_1_373_i.fits"),
-    #         }
+    
+    w = wcs.WCS(fits_file["r"][0].header)
+    x, y = 0, 0
+    ra_temp, dec_temp = w.wcs_pix2world(x, y, 0)
+
+    images =  {"r": fits_file["r"][0].data}
+
+    for band in ["i", "g"]:
+        hdul = fits_file[band]
+        w = wcs.WCS(hdul[0].header)
+        x_temp, y_temp = w.wcs_world2pix(ra_temp, dec_temp, 0)
+        x_shift = -1*int(np.round(x_temp)) 
+        y_shift = -1*int(np.round(y_temp)) 
+        img = fits_file[band][0].data
+
+        images[band] = np.roll(img, [x_shift, y_shift], [1,0])
+
+    stack_images(images) 
     asteroids = find_asteroids(images)
+        #plt.imshow(cropped_images["r"])
+        #plt.show()
     print(asteroids)
 
     img = jpg_from_rcf(run, camcol, field)#plt.imread("image.jpg")
     plt.figure()
-    plt.imshow(img)
+    plt.imshow(np.flipud(img))
 
-    plt.figure()
-    plt.imshow(np.log10(fits_file["r"][0].data))
-    plt.scatter(asteroids.T[1], asteroids.T[0], color="r")
+    #plt.figure()
+    #plt.imshow(np.log10(fits_file["r"][0].data))
+    #plt.scatter(asteroids.T[1], asteroids.T[0], color="r")
     plt.show()
 
 if __name__ == "__main__":
