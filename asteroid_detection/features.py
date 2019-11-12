@@ -111,9 +111,10 @@ def max_corl_offset(img1, img2):
     assert img1.shape == img2.shape, "Images must be the same shape"
     corl = correlate2d(img1, img2, mode="same")
     corl_max = np.argmax(corl)
-    return np.unravel_index(corl_max, img1.shape)
+    corl_max = np.unravel_index(corl_max, img1.shape)
+    return corl_max - np.floor(np.array(img1.shape)/2)
 
-def find_asteroids(images, crop_width=50, crop_height=50):
+def find_asteroids(images, crop_width=51, crop_height=51):
     """
     Use a correlation technique to find asteroids in images.
     """
@@ -130,14 +131,12 @@ def find_asteroids(images, crop_width=50, crop_height=50):
         except OutOfBounds:
             continue
 
-        corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"])) - np.array([25, 25])
-        corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"])) - np.array([25, 25])
+        corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"]))
+        corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"]))
 
         corl_maxes_rg.append(corl_max_rg)
         corl_maxes_ri.append(corl_max_ri)
-        if np.sum(np.abs(corl_max_rg)) > 1 and \
-           np.sum(np.abs(corl_max_ri)) > 1 and \
-           np.sum(np.abs(corl_max_rg - corl_max_ri)) > 1:
+        if np.sum(np.abs(corl_max_rg)) + np.sum(np.abs(corl_max_ri)) > 5:
             print(corl_max_rg, corl_max_ri)
             asteroid_candidates.append(obj)
 
