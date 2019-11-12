@@ -5,7 +5,6 @@ Functions for manipulating fits images to find asteroids.
 #pylint: disable=no-member
 #pylint: disable=unsubscriptable-object
 
-
 import numpy as np
 from scipy.signal import correlate2d
 import cv2
@@ -16,25 +15,6 @@ import logging
 
 from sdss import fits_from_rcf, jpg_from_rcf
 
-def plot_histogram(img):
-    """
-    Plot the RGB histogram of an image.
-    """
-    rgb_hist = rgb_histogram(img)
-    plt.figure()
-    for color, hist in rgb_hist.items():
-        plt.plot(hist, color=color)
-        plt.xlim([0, 256])
-
-def rgb_histogram(img, channels=["r", "g", "b"]):
-    """
-    Find the rgb histogram
-    """
-    hist = {}
-    for ii, color in enumerate(channels):
-        hist[color] = cv2.calcHist([img], [ii], None, [256], [0, 256])
-    return hist
-
 def data_from_fits(fits_file):
     """
     Return the image data from a fits file.
@@ -43,84 +23,29 @@ def data_from_fits(fits_file):
     data = hdul[0].data
     return data
 
-def asteroid(img):
-    """
-    Hardcoded location for known asteroid in test image.
-    """
-    return img[170:205, 200:230]
+def stack_images(images):
+    img = np.dstack([images["r"], images["g"], images["i"]])
+    
+    return img
 
-def other_object(img):
-    """
-    Hardcoded location for non-asteroid object in test image.
-    """
-    return img[500:570, 1000:1070]
+def align_images(fits_file):
+    w = wcs.WCS(fits_file["r"][0].header)
+    x, y = 0, 0
+    ra_temp, dec_temp = w.wcs_pix2world(x, y, 0)
 
-def galaxy(img):
-    """
-    Hardcoded location for galaxy in test image.
-    """
-    return img[420:490, 710:770]
+    images =  {"r": fits_file["r"][0].data}
 
-def plot_object(fits_file, object_getter=asteroid):
-    """
-    Show the image of an object in a fits file.
+    for band in ["i", "g"]:
+        hdul = fits_file[band]
+        w = wcs.WCS(hdul[0].header)
+        x_temp, y_temp = w.wcs_world2pix(ra_temp, dec_temp, 0)
+        x_shift = -1*int(np.round(x_temp)) 
+        y_shift = -1*int(np.round(y_temp)) 
+        img = fits_file[band][0].data
 
-    This function uses an object getter function to get the cropped data from a larger 2D array.
-    """
-    data = data_from_fits(fits_file)
-    data = object_getter(data)
-    plt.figure()
-    plt.title(fits_file)
-    plt.imshow(np.log10(data))
+        images[band] = np.roll(img, [x_shift, y_shift], [1,0])
 
-def plot_rgb(r_fits, g_fits, b_fits, object_getter=asteroid):
-    """
-    Plot an rgb image with area cropped by an object getter.
-    """
-    data = [None, None, None]
-    for ii, fits_file in enumerate([r_fits, g_fits, b_fits]):
-        data[ii] = data_from_fits(fits_file)
-        data[ii] = object_getter(data[ii])
-        plt.figure()
-        plt.imshow(data[ii])
-
-    data = np.dstack(data)
-    plt.figure()
-    plt.imshow(data)
-
-def stack_images(data):
-    img = np.dstack([data["r"], data["g"], data["i"]])
-    plt.figure()
-    plt.imshow(img)
-
-def show_corls():
-    """
-    Test function that shows correlations between multiple fit files.
-    """
-    datar = data_from_fits("752_1_373_r.fits")
-    datar = other_object(datar)
-    datag = data_from_fits("752_1_373_g.fits")
-    datag = other_object(datag)
-    corl = correlate2d(datar, datag, mode="same")
-    plt.figure()
-    plt.imshow(corl)
-
-    datar = data_from_fits("752_1_373_r.fits")
-    datar = galaxy(datar)
-    datag = data_from_fits("752_1_373_g.fits")
-    datag = galaxy(datag)
-    corl = correlate2d(datar, datag, mode="same")
-    plt.figure()
-    plt.imshow(corl)
-
-
-    datar = data_from_fits("752_1_373_r.fits")
-    datar = asteroid(datar)
-    datag = data_from_fits("752_1_373_g.fits")
-    datag = asteroid(datag)
-    corl = correlate2d(datar, datag, mode="same")
-    plt.figure()
-    plt.imshow(corl)
+    return images
 
 def mask_img(img, mask):
     """
@@ -143,7 +68,6 @@ def find_objects(img, threshold=.3):
         object_center = np.unravel_index(object_index, img.shape)
         object_centers.append(object_center)
     return np.array(object_centers)
-
 
 class OutOfBounds(Exception):
     """
@@ -208,8 +132,6 @@ def find_asteroids(images, crop_width=50, crop_height=50):
 
         corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"])) - np.array([25, 25])
         corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"])) - np.array([25, 25])
-        #plt.imshow(cropped_images["r"])
-        #plt.show()
 
         corl_maxes_rg.append(corl_max_rg)
         corl_maxes_ri.append(corl_max_ri)
@@ -221,15 +143,8 @@ def find_asteroids(images, crop_width=50, crop_height=50):
 
     corl_maxes_rg = np.array(corl_maxes_rg)
     corl_maxes_ri = np.array(corl_maxes_ri)
-    plt.figure()
-    plt.scatter(corl_maxes_rg[:, 0], corl_maxes_rg[:,1])
-    plt.figure()
-    plt.scatter(corl_maxes_ri[:, 0], corl_maxes_ri[:,1])
-    #plt.show()
 
     return np.array(asteroid_candidates)
-
-
 
 def main():
     """
@@ -243,32 +158,11 @@ def main():
 
     logging.info("Downloading FITS files")
 
-
-
     fits_file = fits_from_rcf(run, camcol, field)
     
-    w = wcs.WCS(fits_file["r"][0].header)
-    x, y = 0, 0
-    ra_temp, dec_temp = w.wcs_pix2world(x, y, 0)
-
-    images =  {"r": fits_file["r"][0].data}
-
-    for band in ["i", "g"]:
-        hdul = fits_file[band]
-        w = wcs.WCS(hdul[0].header)
-        x_temp, y_temp = w.wcs_world2pix(ra_temp, dec_temp, 0)
-        x_shift = -1*int(np.round(x_temp)) 
-        y_shift = -1*int(np.round(y_temp)) 
-        img = fits_file[band][0].data
-
-        images[band] = np.roll(img, [x_shift, y_shift], [1,0])
-
-    stack_images(images) 
-#    print("Shape: {}".format(images["r"].shape))
+    images = align_images(fits_file) 
     
     asteroids = find_asteroids(images)
-        #plt.imshow(cropped_images["r"])
-        #plt.show()
     print(asteroids)
 
     img = jpg_from_rcf(run, camcol, field)#plt.imread("image.jpg")
@@ -282,9 +176,6 @@ def main():
         plt.figure()
         plt.imshow(crop(img, asteroids[i], 100,100))
 
-    #plt.figure()
-    #plt.imshow(np.log10(fits_file["r"][0].data))
-    #plt.scatter(asteroids.T[1], asteroids.T[0], color="r")
     plt.show()
 
 if __name__ == "__main__":
