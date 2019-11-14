@@ -7,6 +7,7 @@ Functions for manipulating fits images to find asteroids.
 
 import os
 import numpy as np
+import pandas as pd
 from scipy.signal import correlate2d
 import cv2
 from astropy.io import fits
@@ -47,6 +48,15 @@ def align_images(fits_file):
         images[band] = np.roll(img, [x_shift, y_shift], [1,0])
 
     return images
+
+def xy_to_celestial(fits_file, xy):
+    celestial_coords = []
+    for x, y in xy:
+        w = wcs.WCS(fits_file["r"][0].header)
+        ra, dec = w.wcs_pix2world(x, y, 0)
+        celestial_coords.append([ra, dec])
+    
+    return celestial_coords
 
 def mask_img(img, mask):
     """
@@ -115,15 +125,12 @@ def max_corl_offset(img1, img2):
     corl_max = np.unravel_index(corl_max, img1.shape)
     return corl_max - np.floor(np.array(img1.shape)/2)
 
-def find_asteroids(images, crop_width=51, crop_height=51):
+def find_asteroids(images, objects, crop_width=51, crop_height=51):
     """
     Use a correlation technique to find asteroids in images.
     """
     corl_maxes_rg = []
     corl_maxes_ri = []
-    logging.info("Finding objects in image")
-    objects = find_objects(images["r"])
-    logging.info("{} objects found".format(len(objects)))
     logging.info("Running classifier on objects to find asteroids")
     asteroid_candidates = []
     for obj in objects:
@@ -140,9 +147,6 @@ def find_asteroids(images, crop_width=51, crop_height=51):
         if np.sum(np.abs(corl_max_rg)) + np.sum(np.abs(corl_max_ri)) > 5:
             print(corl_max_rg, corl_max_ri)
             asteroid_candidates.append(obj)
-
-    corl_maxes_rg = np.array(corl_maxes_rg)
-    corl_maxes_ri = np.array(corl_maxes_ri)
 
     return np.array(asteroid_candidates)
 
@@ -168,6 +172,8 @@ def save_coordinates(img, coordinates, directory, run, camcol, field):
         cropped = crop(img, coord, 100, 100)
         cv2.imwrite(filename, cropped)
 
+
+
 def main():
     """
     Main function.
@@ -178,6 +184,9 @@ def main():
     camcol = 1
 #    field = 319#373#314#373
 
+    classifications = pd.DataFrame(columns = ["run", "camcol", "field", "right_ascension", "declination",
+                                              "img_x", "img_y", "is_asteroid"])
+
     for field in range(300, 400):
         try:
             logging.info("Downloading FITS files")
@@ -185,9 +194,22 @@ def main():
             fits_file = fits_from_rcf(run, camcol, field)
             
             images = align_images(fits_file) 
-            
-            asteroids = find_asteroids(images)
-            print(asteroids)
+            logging.info("Finding objects in image")
+            objects = find_objects(images["r"])
+            logging.info("{} objects found".format(len(objects)))
+            asteroids = find_asteroids(images, objects)
+            for obj in objects:
+                is_asteroid = obj in asteroids
+                x, y = obj
+                right_ascension, declination =  xy_to_celestial(fits_file, [[x, y]])[0]
+                classifications = classifications.append({"run" : run, "camcol" : camcol, "field" : field,
+                                        "right_ascension": right_ascension, "declination": declination,
+                                        "img_x": x, "img_y": y,
+                                        "is_asteroid": is_asteroid},
+                                        ignore_index=True)
+            classifications.to_csv("classifications.csv")                 
+
+
             jpg_img = jpg_resized(run, camcol, field, images["r"].shape)
             save_coordinates(jpg_img, asteroids, "asteroids", run, camcol, field)
         except:
