@@ -5,6 +5,7 @@ Functions for manipulating fits images to find asteroids.
 #pylint: disable=no-member
 #pylint: disable=unsubscriptable-object
 
+import os
 import numpy as np
 from scipy.signal import correlate2d
 import cv2
@@ -145,37 +146,53 @@ def find_asteroids(images, crop_width=51, crop_height=51):
 
     return np.array(asteroid_candidates)
 
+def jpg_resized(run, camcol, field, shape):
+    img = jpg_from_rcf(run, camcol, field)
+    img = np.flipud(img)
+    img = cv2.resize(np.array(img), (shape[1], shape[0]))
+    return img
+
+def display_coordinates(img, coordinates):
+    plt.figure()
+    plt.imshow(img)
+    plt.figure()
+    for coord in coordinates:
+        plt.figure()
+        plt.imshow(crop(img, coord, 100,100))
+    plt.show()
+
+def save_coordinates(img, coordinates, directory, run, camcol, field):
+    for coord in coordinates:
+        filename = os.path.join(directory, "{}_{}_{}_{}_{}.jpg".format(run, camcol, field, coord[0], coord[1]))
+        logging.info("Saving {}".format(filename))
+        cropped = crop(img, coord, 100, 100)
+        cv2.imwrite(filename, cropped)
+
 def main():
     """
     Main function.
     """
     logging.basicConfig(level=logging.INFO)
 
-    run = 752#756#752
+    run = 756#756#752
     camcol = 1
-    field = 373#314#373
+#    field = 319#373#314#373
 
-    logging.info("Downloading FITS files")
+    for field in range(300, 400):
+        try:
+            logging.info("Downloading FITS files")
 
-    fits_file = fits_from_rcf(run, camcol, field)
-    
-    images = align_images(fits_file) 
-    
-    asteroids = find_asteroids(images)
-    print(asteroids)
-
-    img = jpg_from_rcf(run, camcol, field)#plt.imread("image.jpg")
-    shape = images["r"].shape
-    img = np.flipud(img)
-    img = cv2.resize(np.array(img), (shape[1], shape[0]))
-    plt.figure()
-    plt.imshow(img)
-    plt.figure()
-    for i in range(len(asteroids)):
-        plt.figure()
-        plt.imshow(crop(img, asteroids[i], 100,100))
-
-    plt.show()
+            fits_file = fits_from_rcf(run, camcol, field)
+            
+            images = align_images(fits_file) 
+            
+            asteroids = find_asteroids(images)
+            print(asteroids)
+            jpg_img = jpg_resized(run, camcol, field, images["r"].shape)
+            save_coordinates(jpg_img, asteroids, "asteroids", run, camcol, field)
+        except:
+            logging.error("Error in processing; continuing with next image")
+#    display_coordinates(run, camcol, field, asteroids)
 
 if __name__ == "__main__":
     main()
