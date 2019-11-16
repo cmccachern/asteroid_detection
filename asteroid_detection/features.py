@@ -49,6 +49,12 @@ def align_images(fits_file):
 
     return images
 
+def get_aligned_images(run, camcol, field):
+    fits_file = fits_from_rcf(run, camcol, field)
+    images = align_images(fits_file) 
+    return images
+ 
+
 def xy_to_celestial(fits_file, xy):
     celestial_coords = []
     for x, y in xy:
@@ -162,7 +168,8 @@ def display_coordinates(img, coordinates):
     plt.figure()
     for coord in coordinates:
         plt.figure()
-        plt.imshow(crop(img, coord, 100,100))
+        cropped = crop(img, coord, 100, 100)
+        plt.imshow(cropped)
     plt.show()
 
 def save_coordinates(img, coordinates, directory, run, camcol, field):
@@ -180,12 +187,13 @@ def main():
     """
     logging.basicConfig(level=logging.INFO)
 
-    run = 756#756#752
+    run = 752#756#752
     camcol = 1
 #    field = 319#373#314#373
 
-    classifications = pd.DataFrame(columns = ["run", "camcol", "field", "right_ascension", "declination",
-                                              "img_x", "img_y", "is_asteroid"])
+#    classifications = pd.DataFrame(columns = ["run", "camcol", "field", "right_ascension", "declination",
+#                                              "img_x", "img_y", "is_asteroid"])
+    classifications = pd.read_csv("classifications.csv")
 
     for field in range(300, 400):
         try:
