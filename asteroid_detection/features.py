@@ -131,27 +131,25 @@ def max_corl_offset(img1, img2):
     corl_max = np.unravel_index(corl_max, img1.shape)
     return corl_max - np.floor(np.array(img1.shape)/2)
 
+def is_asteroid(images, obj, crop_width=51, crop_height=51):
+    try:
+        cropped_images = crop_all(images, obj, crop_width, crop_height)
+    except OutOfBounds:
+        return False  
+
+    corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"]))
+    corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"]))
+
+    return np.sum(np.abs(corl_max_rg)) + np.sum(np.abs(corl_max_ri)) > 5
+
 def find_asteroids(images, objects, crop_width=51, crop_height=51):
     """
     Use a correlation technique to find asteroids in images.
     """
-    corl_maxes_rg = []
-    corl_maxes_ri = []
     logging.info("Running classifier on objects to find asteroids")
     asteroid_candidates = []
     for obj in objects:
-        try:
-            cropped_images = crop_all(images, obj, crop_width, crop_height)
-        except OutOfBounds:
-            continue
-
-        corl_max_rg = np.array(max_corl_offset(cropped_images["r"], cropped_images["g"]))
-        corl_max_ri = np.array(max_corl_offset(cropped_images["r"], cropped_images["i"]))
-
-        corl_maxes_rg.append(corl_max_rg)
-        corl_maxes_ri.append(corl_max_ri)
-        if np.sum(np.abs(corl_max_rg)) + np.sum(np.abs(corl_max_ri)) > 5:
-            print(corl_max_rg, corl_max_ri)
+        if is_asteroid:
             asteroid_candidates.append(obj)
 
     return np.array(asteroid_candidates)
@@ -207,13 +205,13 @@ def main():
             logging.info("{} objects found".format(len(objects)))
             asteroids = find_asteroids(images, objects)
             for obj in objects:
-                is_asteroid = obj in asteroids
+                is_an_asteroid = obj in asteroids
                 x, y = obj
                 right_ascension, declination =  xy_to_celestial(fits_file, [[x, y]])[0]
                 classifications = classifications.append({"run" : run, "camcol" : camcol, "field" : field,
                                         "right_ascension": right_ascension, "declination": declination,
                                         "img_x": x, "img_y": y,
-                                        "is_asteroid": is_asteroid},
+                                        "is_asteroid": is_an_asteroid},
                                         ignore_index=True)
             classifications.to_csv("classifications.csv")                 
 

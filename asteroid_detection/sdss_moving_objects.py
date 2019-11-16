@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from features import get_aligned_images, jpg_resized, display_coordinates, find_asteroids
+from features import get_aligned_images, jpg_resized, display_coordinates, is_asteroid
 
 def get_moving_objects(filename = "~/Downloads/ADR4.dat"):
     df = pd.read_csv(filename, delim_whitespace=True)
@@ -28,8 +28,10 @@ if __name__ == "__main__":
     run, camcol, field = 752, 1, 321
     images = get_aligned_images(run, camcol, field)
     asteroid_coordinates = asteroid_coords_in_rcf(run, camcol, field)
-    asteroids = find_asteroids(images, asteroid_coordinates)
-    print(asteroids)
+    for coord in asteroid_coordinates:
+        print(is_asteroid(images, coord))
+#    asteroids = find_asteroids(images, asteroid_coordinates)
+#    print(asteroids)
 
     jpg_img = jpg_resized(run, camcol, field, images["r"].shape)
     display_coordinates(jpg_img, asteroid_coordinates)
