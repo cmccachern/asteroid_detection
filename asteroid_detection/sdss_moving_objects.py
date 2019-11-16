@@ -16,8 +16,9 @@ def asteroids_in_rcf(df, run, camcol, field):
      
     return df
 
+moving_objects = get_moving_objects()
 def asteroid_coords_in_rcf(run, camcol, field):
-    df = get_moving_objects()
+    df = moving_objects#get_moving_objects()
     asteroids = asteroids_in_rcf(df, run, camcol, field)
     asteroid_coordinates = np.array(list((zip(asteroids["rowc"], asteroids["colc"]))))
     asteroid_coordinates = np.round(asteroid_coordinates)
@@ -25,7 +26,7 @@ def asteroid_coords_in_rcf(run, camcol, field):
     return asteroid_coordinates
 
 if __name__ == "__main__":
-    run, camcol, field = 752, 1, 321
+    run, camcol, field = 1033, 1, 147#752, 1, 321
     images = get_aligned_images(run, camcol, field)
     asteroid_coordinates = asteroid_coords_in_rcf(run, camcol, field)
     for coord in asteroid_coordinates:
